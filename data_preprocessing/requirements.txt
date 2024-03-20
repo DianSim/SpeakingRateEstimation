@@ -1,0 +1,11 @@
+pip install soundfile
+python -m pip install scipy
+pip install tensorflow-addons
+pip install scikit-learn
+python -m pip install -U matplotlib
+pytorch 2.2.1
+
+git push origin master
+source ~/miniforge3/bin/activate
+source ~/venv-metal/bin/activate
+conda remove -n ENV_NAME --all
