@@ -42,10 +42,12 @@ def collate_fn(batch):
     padded_wav = torch.nn.functional.pad(waveforms[0], pad=(0, max_input_len-waveforms[0].shape[0]))
     first_seq = padded_wav.unfold(0, size=win_size_smpl, step=hope_size_smpl)
 
-    batch_seq = torch.LongTensor(len(batch), *first_seq.shape)
+    batch_seq = torch.FloatTensor(len(batch), *first_seq.shape)
     for i in range(len(waveforms)):
         wav = batch[i][0]
         padded_wav = torch.nn.functional.pad(wav, pad=(0, max_input_len - wav.shape[0]))
         input_seq = padded_wav.unfold(0, size=win_size_smpl, step=hope_size_smpl)
         batch_seq[i] = input_seq
-    return batch_seq, labels
+    return batch_seq, torch.stack(list(labels), dim=0)
+
+
