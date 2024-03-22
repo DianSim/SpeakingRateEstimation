@@ -1,7 +1,6 @@
-"""Dataset class for LSTM regression model"""
-import sys
+"""Dataset class for LSTM classification model"""
 import os
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 import torch
 import torchaudio
 import glob
@@ -21,10 +20,10 @@ class AudioDataset(Dataset):
         waveform = torch.squeeze(waveform)
         file_name = file_path.split(os.path.sep)[-1]
         label = file_name.split('.')[0].split('_')[0]
-        label = torch.tensor(int(label), dtype=torch.float32)
+        label = torch.tensor(int(label), dtype=torch.int32)
         return waveform, label
-
-
+    
+    
 def collate_fn(batch):
     """
        data: is a list of tuples with (wav, label)
@@ -48,6 +47,4 @@ def collate_fn(batch):
         padded_wav = torch.nn.functional.pad(wav, pad=(0, max_input_len - wav.shape[0]))
         input_seq = padded_wav.unfold(0, size=win_size_smpl, step=hope_size_smpl)
         batch_seq[i] = input_seq
-    return batch_seq, torch.stack(list(labels), dim=0)
-
-
+    return batch_seq, torch.stack(list(labels), dim=0).type(torch.LongTensor)

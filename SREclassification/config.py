@@ -5,7 +5,7 @@ config ={
     'frame_length': 35,
     'window_shift': 10,
     'train_params': {
-        'batch_size': 64,
+        'batch_size': 8,
         'epochs':200,
         'steps_per_epoch': None,
         # 'latest_checkpoint_step': 1,

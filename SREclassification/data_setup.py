@@ -5,9 +5,7 @@ audio data speaking rate estimation task.
 import os
 from torch.utils.data import DataLoader
 from config import config
-# from LSTM_regression.dataset import AudioDataset, collate_fn
-# from LSTM_classification.dataset import AudioDataset, collate_fn
-from MatchBoxNet_classification.dataset import AudioDataset
+from LSTM.dataset import AudioDataset, collate_fn
 
 NUM_WORKERS = os.cpu_count()
 
@@ -47,55 +45,33 @@ def create_dataloaders(
     val_dataset = AudioDataset(data_dir=val_dir)
     test_dataset = AudioDataset(data_dir=test_dir)
 
+    print('train data size: ', len(train_dataset))
+    print('val data size: ', len(val_dataset))
+    print('test data size: ', len(test_dataset))
+
     train_dataloader = DataLoader(
         train_dataset,
         batch_size=batch_size,
         collate_fn=collate_fn,
         shuffle=True,
-        num_workers=num_workers,
+        # num_workers=num_workers,
         pin_memory=True
     )
     val_dataloader = DataLoader(
         val_dataset,
         batch_size=batch_size,
         collate_fn=collate_fn,
-        num_workers=num_workers,
+        shuffle=False,
+        # num_workers=num_workers,
         pin_memory=True
     )
     test_dataloader = DataLoader(
         test_dataset,
         batch_size=batch_size,
         collate_fn=collate_fn,
-        num_workers=num_workers,
+        shuffle=False,
+        # num_workers=num_workers,
         pin_memory=True
     )
 
     return train_dataloader, val_dataloader, test_dataloader
-
-
-if __name__ == '__main__':
-    train_dir = '/Users/dianasimonyan/Desktop/Thesis/torch_implementation/datasets/LibriSpeechChuncked_v2/train-clean-100'
-    test_dir = '/Users/dianasimonyan/Desktop/Thesis/torch_implementation/datasets/LibriSpeechChuncked_v2/test-clean'
-    val_dir = '/Users/dianasimonyan/Desktop/Thesis/torch_implementation/datasets/LibriSpeechChuncked_v2/dev-clean'
-
-    # train_dataloader, val_dataloader, test_dataloader = create_dataloaders(train_dir=train_dir, 
-    #                                                                        test_dir=test_dir, 
-    #                                                                        val_dir=val_dir, 
-    #                                                                        batch_size=16, 
-    #                                                                        collate_fn=collate_fn)
-    # print('train data count: ', len(train_dataloader))
-    # print('val data count: ', len(val_dataloader))
-    # print('test data count: ', len(test_dataloader))
-
-    # for batch_seq, labels in train_dataloader:
-    #     print(batch_seq.shape)
-    #     print(labels)
-    #     print()
-
-    train_dir = '/Users/dianasimonyan/Desktop/Thesis/torch_implementation/datasets/LibriSpeechChuncked_v2/train-clean-100'
-    train_dataset = AudioDataset(data_dir=train_dir)
-    s = set()
-    for x in train_dataset:
-        print(x[0].shape)
-
-    print(s)
