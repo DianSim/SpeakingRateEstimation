@@ -1,12 +1,17 @@
 config ={
-    'model_name': 'LSTM128_dense25_noise_augm',
+    'model_name': 'MatchBoxNetreg3x2x64',
+    'model_dir': '/data/saten/diana/SpeakingRateEstimation/SREregression/models',
+    'noise_dir': '/data/saten/diana/SpeakingRateEstimation/data/ESC-50-master/audio',
+    'train_dir': '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_v2/train-clean-100',
+    'val_dir': '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_v2/dev-clean',
+    'test_dir': '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_v2/test-clean',
     'sample_rate': 16000,
-    'input_len': 32325, # max input length
+    'input_len': 33601, # max input length
     'frame_length': 35,
     'window_shift': 10,
     'train_params': {
-        'batch_size': 8,
-        'epochs':200,
+        'batch_size': 200,
+        'max_epochs':200,
         'steps_per_epoch': None,
         # 'latest_checkpoint_step': 1,
         # 'summary_step': 50, 

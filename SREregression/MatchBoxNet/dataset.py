@@ -10,9 +10,10 @@ import torchaudio.transforms as T
 config_feature = config['feature']
 
 class AudioDataset(Dataset):
-    def __init__(self, data_dir):
+    def __init__(self, data_dir, transform=None):
         self.input_len = config['input_len']
         self.file_list = glob.glob(os.path.join(data_dir, '**/*.wav'), recursive=True)
+        self.transform = transform
         self.mfcc_transform =  T.MFCC(
             sample_rate=config['sample_rate'],
             n_mfcc=config_feature['mfcc_num_mel_bins'], # ??self.fft_length//2 + 1
@@ -32,11 +33,15 @@ class AudioDataset(Dataset):
         waveform, sample_rate = torchaudio.load(file_path)
         waveform = torch.squeeze(waveform)
         waveform = self.right_pad(waveform)
+
+        if self.transform is not None:
+            waveform = self.transform(waveform)
+
         mfcc = self.mfcc_transform(waveform)
         file_name = file_path.split(os.path.sep)[-1]
         label = file_name.split('.')[0].split('_')[0]
-        label = torch.tensor(int(label), dtype=torch.int32)
-        return mfcc, label
+        label = torch.tensor(int(label), dtype=torch.float32)
+        return mfcc, label.view(1)
     
     def right_pad(self, wave):
         signal_length = wave.shape[0]
@@ -45,6 +50,3 @@ class AudioDataset(Dataset):
             pad_size = self.input_len - signal_length
             wave = torch.nn.functional.pad(wave, pad=(0, pad_size))
         return wave
-    
-
-
