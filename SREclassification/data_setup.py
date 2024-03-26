@@ -5,18 +5,17 @@ audio data speaking rate estimation task.
 import os
 from torch.utils.data import DataLoader
 from config import config
-from LSTM.dataset import AudioDataset, collate_fn
-
-NUM_WORKERS = os.cpu_count()
+# from LSTM.dataset import AudioDataset, collate_fn
+from MatchBoxNet.dataset import AudioDataset
 
 def create_dataloaders(
         train_dir: str, 
         test_dir: str, 
         val_dir: str,
-        # transform: transforms.Compose,
         batch_size: int, 
+        num_workers: int,
         collate_fn: object=None,
-        num_workers: int=NUM_WORKERS
+        transform: object=None
     ):
     """Creates training, testing and validation DataLoaders.
 
@@ -41,7 +40,7 @@ def create_dataloaders(
                                 batch_size=32,
                                 num_workers=4)
     """
-    train_dataset = AudioDataset(data_dir=train_dir)
+    train_dataset = AudioDataset(data_dir=train_dir, transform=transform)
     val_dataset = AudioDataset(data_dir=val_dir)
     test_dataset = AudioDataset(data_dir=test_dir)
 
@@ -54,7 +53,7 @@ def create_dataloaders(
         batch_size=batch_size,
         collate_fn=collate_fn,
         shuffle=True,
-        # num_workers=num_workers,
+        num_workers=num_workers,
         pin_memory=True
     )
     val_dataloader = DataLoader(
@@ -62,7 +61,7 @@ def create_dataloaders(
         batch_size=batch_size,
         collate_fn=collate_fn,
         shuffle=False,
-        # num_workers=num_workers,
+        num_workers=num_workers,
         pin_memory=True
     )
     test_dataloader = DataLoader(
@@ -70,7 +69,7 @@ def create_dataloaders(
         batch_size=batch_size,
         collate_fn=collate_fn,
         shuffle=False,
-        # num_workers=num_workers,
+        num_workers=num_workers,
         pin_memory=True
     )
 

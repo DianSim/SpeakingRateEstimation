@@ -1,37 +1,44 @@
-import os
-import torch
-import data_setup, engine, model, utils
+import pytorch_lightning as pl
+import data_setup, model, utils
+from utils import build_trainer
 from config import config
+# from LSTM.dataset import collate_fn
+from augmentation import NoiseAugmentation
 
-# from LSTM_regression.dataset import collate_fn
-from LSTM.dataset import collate_fn
+# for MatchBoxNet change the model to MatchBoxNetreg, config['model_name'] to 'MatchBoxNetreg'
+# and import correct datset and model
 
 
-train_dir = '/Users/dianasimonyan/Desktop/Thesis/torch_implementation/datasets/LibriSpeechChuncked_v2/train-clean-100'
-val_dir = '/Users/dianasimonyan/Desktop/Thesis/torch_implementation/datasets/LibriSpeechChuncked_v2/dev-clean'
-test_dir = '/Users/dianasimonyan/Desktop/Thesis/torch_implementation/datasets/LibriSpeechChuncked_v2/test-clean'
+train_dir = config['train_dir']
+val_dir = config['val_dir']
+test_dir = config['test_dir']
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
 
 train_dataloader, val_dataloader, test_dataloader = data_setup.create_dataloaders(
     train_dir=train_dir,
     test_dir=test_dir,
     val_dir = val_dir,
+    num_workers=50,
     batch_size=config['train_params']['batch_size'],
-    collate_fn = collate_fn
+    # collate_fn = collate_fn,
+    transform=NoiseAugmentation(noise_dir=config['noise_dir'])
 )
 
-model = model.LSTMClassification().to(device)
+model = model.MatchBoxNetclass(B=6, R=2, C=64)
 
-loss_fn = torch.nn.CrossEntropyLoss()
+# for x in train_dataloader:
+#     print(model(x[0]).shape)
+#     break
 
-optimizer = torch.optim.Adam(model.parameters(),
-                             lr=0.001)
+# model = model.LSTMClassification()
 
-engine.train(model=model,
-             train_dataloader=train_dataloader,
-             test_dataloader=val_dataloader,
-             loss_fn=loss_fn,
-             optimizer=optimizer,
-             epochs=config['train_params']['epochs'],
-             device=device)
+# for x in train_dataloader:
+#     print(x[1].dtype)
+#     y = model(x[0])
+#     print(y.dtype)
+#     print(x[1].shape)
+#     print(y.shape)
+#     break
+
+trainer = build_trainer(config)
+trainer.fit(model, train_dataloader, val_dataloader)
