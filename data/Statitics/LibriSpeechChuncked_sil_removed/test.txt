@@ -1,0 +1,5 @@
+max speaking rate(test): 22
+number of audios (test): 10102
+max length (test): 2.0203125
+min length (test): 0.2200625
+max length in samples (test): 32325

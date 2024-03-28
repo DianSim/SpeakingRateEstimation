@@ -60,11 +60,12 @@ def stat(dir, save_dir, split):
 
 
 if __name__ == '__main__':
-    save_dir = '/Users/dianasimonyan/Desktop/Thesis/torch_implementation/datasets/Statitics/clean_LB_Speech_stat_v2_truncated'
-    val_dir = '/Users/dianasimonyan/Desktop/Thesis/torch_implementation/datasets/LibriSpeechChuncked_v2/dev-clean'
-    test_dir = '/Users/dianasimonyan/Desktop/Thesis/torch_implementation/datasets/LibriSpeechChuncked_v2/test-clean'
-    train_dir = '/Users/dianasimonyan/Desktop/Thesis/torch_implementation/datasets/LibriSpeechChuncked_v2/train-clean-100'
+    save_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/Statitics/LibriSpeechChuncked_sil_removed'
+    val_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/dev-clean'
+    test_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/test-clean'
+    train_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/train-clean-100'
 
     stat(val_dir, save_dir, 'val')
     stat(test_dir, save_dir, 'test')
     stat(train_dir, save_dir, 'train')
+
