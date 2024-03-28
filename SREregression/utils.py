@@ -29,7 +29,7 @@ def build_trainer(config):
 
     # Create a PyTorch Lightning trainer with the generation of logs disabled
     trainer = Trainer(max_epochs=config['train_params']['max_epochs'], 
-                      gpus=[0],
+                      devices='auto',
                       logger=tensorboard_logger,
                       callbacks=[checkpoint_callback]
                       )

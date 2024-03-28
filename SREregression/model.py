@@ -26,7 +26,7 @@ class LSTMRegression(pl.LightningModule):
     def forward(self, x):
         lstm_out, (hn, cn) = self.lstm(x)
         reg_out = self.hidden2out(lstm_out[:, -1, :])
-        out = torch.clamp(reg_out, min=0, max=24)
+        out = torch.clamp(reg_out, min=0, max=38)
         return out
     
     def training_step(self, batch, batch_idx):

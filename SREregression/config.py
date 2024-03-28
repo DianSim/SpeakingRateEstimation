@@ -1,10 +1,10 @@
 config ={
-    'model_name': 'MatchBoxNetreg3x2x64',
-    'model_dir': '/data/saten/diana/SpeakingRateEstimation/SREregression/models',
-    'noise_dir': '/data/saten/diana/SpeakingRateEstimation/data/ESC-50-master/audio',
-    'train_dir': '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_v2/train-clean-100',
-    'val_dir': '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_v2/dev-clean',
-    'test_dir': '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_v2/test-clean',
+    'model_name': 'rLSTM128_augm',
+    'model_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/SREregression/models',
+    'noise_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/ESC-50_16khz/audio',
+    'train_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/train-clean-100-fast-augmented',
+    'val_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/dev-clean',
+    'test_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/test-clean',
     'sample_rate': 16000,
     'input_len': 33601, # max input length
     'frame_length': 35,
