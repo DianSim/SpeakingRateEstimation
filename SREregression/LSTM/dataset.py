@@ -5,7 +5,7 @@ import torch
 import torchaudio
 import glob
 from config import config
-from augmentation import NoiseAugmentation
+# from augmentation import NoiseAugmentation
 
 
 class AudioDataset(Dataset):
@@ -15,15 +15,11 @@ class AudioDataset(Dataset):
 
     def __len__(self):
         return len(self.audio_file_paths)
-        
+
     def __getitem__(self, idx):
         file_path = self.audio_file_paths[idx]
         audio, sample_rate = torchaudio.load(file_path)
         audio = torch.squeeze(audio)
-
-        #  pad silence from the beggining
-        sil_length = 0.02
-        audio = torch.nn.functional.pad(audio, pad=(int(0.01*16000), 0))
 
         if self.transform:
             audio = self.transform(audio)
@@ -34,13 +30,13 @@ class AudioDataset(Dataset):
 
         audio = audio - mean
         audio = audio / std
-        
+
         file_name = file_path.split(os.path.sep)[-1]
         label = file_name.split('.')[0].split('_')[0]
         label = torch.tensor(int(label), dtype=torch.float32)
         return audio, label
-    
-    
+
+
 def collate_fn(batch):
     """
        data: is a list of tuples with (wav, label)
@@ -70,18 +66,13 @@ def collate_fn(batch):
 # # noise augmntation testing
 
 # if __name__ == '__main__':
-#     train = AudioDataset(data_dir='/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/train-clean-100',
-#                  transform=NoiseAugmentation(noise_dir='/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/ESC-50_16khz/audio'))
+#     train = AudioDataset(data_dir='/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_v2/train-clean-100',
+#                  transform=NoiseAugmentation(noise_dir='/data/saten/diana/SpeakingRateEstimation/data/ESC-50-master/audio'))
+#     from scipy.io.wavfile import write
 
-#     for x in train:
-#         print(x[0])
-#         print(x[1])
-#         break
-    # from scipy.io.wavfile import write
-
-    # os.makedirs('./test', exist_ok=True)
-    # for i, x in enumerate(train):
-    #     # Assuming x is a tuple where the first element is the audio data
-    #     audio_data = x[0].numpy()  # Convert tensor to numpy array
-    #     sample_rate = 16000  # Replace with your sample rate
-    #     write(f'./test/audio_{i}.wav', sample_rate, audio_data)
+#     os.makedirs('./test', exist_ok=True)
+#     for i, x in enumerate(train):
+#         # Assuming x is a tuple where the first element is the audio data
+#         audio_data = x[0].numpy()  # Convert tensor to numpy array
+#         sample_rate = 16000  # Replace with your sample rate
+#         write(f'./test/audio_{i}.wav', sample_rate, audio_data)

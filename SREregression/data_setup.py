@@ -1,5 +1,5 @@
 """
-Contains functionality for creating PyTorch DataLoaders for 
+Contains functionality for creating PyTorch DataLoaders for
 audio data speaking rate estimation task.
 """
 import os
@@ -9,10 +9,10 @@ from LSTM.dataset import AudioDataset, collate_fn
 # from MatchBoxNet.dataset import AudioDataset
 
 def create_dataloaders(
-        train_dir: str, 
-        test_dir: str, 
+        train_dir: str,
+        test_dir: str,
         val_dir: str,
-        batch_size: int, 
+        batch_size: int,
         num_workers: int,
         collate_fn: object=None,
         transform: object=None

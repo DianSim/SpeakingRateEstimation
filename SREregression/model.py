@@ -6,8 +6,8 @@ import torch.nn.functional as F
 
 
 class LSTMRegression(pl.LightningModule):
-    """Simple LSTM-RNN to predict speaking rate 
-        
+    """Simple LSTM-RNN to predict speaking rate
+
         Args:
             input_size: input size of RNN-LSTM
             hidden_size: hidden size of RNN-LSTM
@@ -15,20 +15,20 @@ class LSTMRegression(pl.LightningModule):
     """
     def __init__(self, input_size=560, hidden_size=128, output_size=1):
         super().__init__()
-        self.lstm = nn.LSTM(input_size=input_size, 
-                            hidden_size=hidden_size, 
+        self.lstm = nn.LSTM(input_size=input_size,
+                            hidden_size=hidden_size,
                             num_layers=1,
                             batch_first=True)
         self.hidden2out = nn.Linear(hidden_size, output_size)
         self.loss = nn.MSELoss()
         self.pearson = PearsonCorrCoef()
-    
+
     def forward(self, x):
         lstm_out, (hn, cn) = self.lstm(x)
         reg_out = self.hidden2out(lstm_out[:, -1, :])
         out = torch.clamp(reg_out, min=0, max=38)
         return out
-    
+
     def training_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
@@ -37,7 +37,7 @@ class LSTMRegression(pl.LightningModule):
         self.log('train_pcc', self.pearson(y_hat, y))
         self.logger.experiment.add_scalars('loss', {'train': loss}, self.global_step)
         return loss
-    
+
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
@@ -47,17 +47,26 @@ class LSTMRegression(pl.LightningModule):
         self.logger.experiment.add_scalars('loss', {'val': loss}, self.global_step)
         return loss
 
+    def predict_step(self, batch, batch_idx):
+        x, y = batch
+        y_hat = self(x)
+        loss = self.loss(y_hat, y)
+
+        return {'loss':loss, 'y_hat':y_hat, 'y':y, 'pcc':self.pearson(y_hat, y)}
+
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
         return optimizer
-    
+
+    # write predict step
+
 
 # ----------MatchBoxNet model----------------
 class TCSConv(nn.Module):
     '''
     An implementation of Time-channel Seperable Convolution
 
-    Arguments
+    **Arguments**
     in_channels : int
         The number of input channels to the layers
     out_channels : int
@@ -76,7 +85,7 @@ class TCSConv(nn.Module):
     '''
     def __init__(self, in_channels, out_channels, kernel_size):
         super(TCSConv, self).__init__()
-        
+
         self.depthwise_conv = nn.Conv1d(in_channels, in_channels, kernel_size, groups=in_channels, padding='same')
         self.pointwise_conv = nn.Conv1d(in_channels, out_channels, kernel_size=1)
 
@@ -89,21 +98,21 @@ class SubBlock(nn.Module):
     '''
     An implementation of a sub-block that is repeated R times
 
-    Arguments
+    **Arguments**
     in_channels : int
         The number of input channels to the layers
     out_channels : int
         The requested number of output channels of the layers
     kernel_size : int
         The size of the convolution kernel
-    
+
     residual : None or torch.Tensor
         Only applicable for the final sub-block. If not None, will add 'residual' after batchnorm layer
 
     Example
     -------
     >>> inputs = torch.randn(1, 128, 600)
-    
+
     >>> subblock = SubBlock(128, 64, 13)
     >>> outputs = subblock(inputs)
     >>> outputs.shape
@@ -131,12 +140,12 @@ class SubBlock(nn.Module):
         x = self.dropout(x)
 
         return x
-    
+
 class MainBlock(nn.Module):
     '''
     An implementation of the residual block containing R repeating sub-blocks
 
-    Arguments
+    **Arguments**
     in_channels : int
         The number of input channels to the residual block
     out_channels : int
@@ -145,14 +154,14 @@ class MainBlock(nn.Module):
         The size of the convolution kernel
     R : int
         The number of repeating sub-blocks contained within this residual block
-    
+
     residual : None or torch.Tensor
         Only applicable for the final sub-block. If not None, will add 'residual' after batchnorm layer
 
     Example
     -------
     >>> inputs = torch.randn(1, 128, 300)
-    
+
     >>> block = MainBlock(128, 64, 13, 3)
     >>> outputs = block(inputs)
     >>> outputs.shape
@@ -179,7 +188,7 @@ class MainBlock(nn.Module):
             self.sub_blocks.append(
                 SubBlock(self.out_channels, self.out_channels, self.kernel_size)
             )
-    
+
     def forward(self, x):
         residual = self.residual_pointwise(x)
         residual = self.residual_batchnorm(residual)
@@ -190,12 +199,12 @@ class MainBlock(nn.Module):
             else:
                 x = layer(x)
         return x
-    
+
 class MatchboxNet(nn.Module):
     '''
-    The input is expected to be 64 channel MFCC features 
+    The input is expected to be 64 channel MFCC features
 
-    Arguments
+    **Arguments**
     B : int
         The number of residual blocks in the model
     R : int
@@ -211,16 +220,16 @@ class MatchboxNet(nn.Module):
     Example
     -------
     >>> inputs = torch.randn(1, 64, 500)
-    
+
     >>> model = MatchboxNet(B=3, R=2, C=64, NUM_CLASSES=30)
     >>> outputs = model(inputs)
     >>> outputs.shape
     torch.Size([1, 30])
     '''
-    def __init__(self, B, R, C, kernel_sizes=None): 
+    def __init__(self, B, R, C, kernel_sizes=None):
         super(MatchboxNet, self).__init__()
         if not kernel_sizes:
-            kernel_sizes = [k*2+11 for k in range(1,5+1)] # incrementing kernel size by 2 starting at 13
+            kernel_sizes = [k*2+11 for k in range(1,8+1)] # incrementing kernel size by 2 starting at 13
 
         # the prologue layers
         self.prologue_conv1 = nn.Conv1d(64, 128, kernel_size=11, stride=2)
@@ -246,12 +255,12 @@ class MatchboxNet(nn.Module):
         self.epilogue_bnorm2 = nn.BatchNorm1d(128)
 
         self.epilogue_conv3 = nn.Conv1d(128, 1, kernel_size=1)
-        
+
         # Pool the timesteps into a single dimension using simple average pooling
         self.epilogue_adaptivepool = nn.AdaptiveAvgPool1d(1)
-        
+
     def forward(self, x):
-        # inpute shape (64, 187)
+        # inpute shape (64, 187) -> (64, 147)
         # prologue block
         x = self.prologue_conv1(x) # (64, 187) > (128, 89)
         x = self.prologue_bnorm1(x)
@@ -271,10 +280,11 @@ class MatchboxNet(nn.Module):
         x = self.epilogue_conv3(x) # (128, 33) > (1, 33)
         x = self.epilogue_adaptivepool(x) # (1, 33) > (1, 1)
         x = x.squeeze(2) # (N, 1, 1) > (N, 1)
-        x = torch.clamp(x, min=0, max=24)
-        
+        x = torch.clamp(x, min=0, max=38)
+
         return x
-    
+
+
 class MatchBoxNetreg(pl.LightningModule):
     """
          Args:
@@ -287,11 +297,11 @@ class MatchBoxNetreg(pl.LightningModule):
         self.matchboxnet = MatchboxNet(B, R, C, kernel_sizes)
         self.loss = nn.MSELoss()
         self.pearson = PearsonCorrCoef()
-    
+
     def forward(self, x):
         out = self.matchboxnet(x)
         return out
-    
+
     def training_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
@@ -300,7 +310,7 @@ class MatchBoxNetreg(pl.LightningModule):
         self.log('train_pcc', self.pearson(y_hat, y))
         self.logger.experiment.add_scalars('loss', {'train': loss}, self.global_step)
         return loss
-    
+
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
@@ -309,8 +319,8 @@ class MatchBoxNetreg(pl.LightningModule):
         self.log('val_pcc', self.pearson(y_hat, y))
         self.logger.experiment.add_scalars('loss', {'val': loss}, self.global_step)
         return loss
-    
-      
+
+
     def predict_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
