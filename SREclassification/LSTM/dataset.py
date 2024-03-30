@@ -15,7 +15,7 @@ class AudioDataset(Dataset):
 
     def __len__(self):
         return len(self.audio_file_paths)
-        
+
     def __getitem__(self, idx):
         file_path = self.audio_file_paths[idx]
         audio, sample_rate = torchaudio.load(file_path)
@@ -24,12 +24,19 @@ class AudioDataset(Dataset):
         if self.transform:
             audio = self.transform(audio)
 
+        # normalization
+        mean = torch.mean(audio)
+        std = torch.std(audio)
+
+        audio = audio - mean
+        audio = audio / std
+
         file_name = file_path.split(os.path.sep)[-1]
         label = file_name.split('.')[0].split('_')[0]
         label = torch.tensor(int(label), dtype=torch.int32)
         return audio, label.type(torch.LongTensor)
-    
-    
+
+
 def collate_fn(batch):
     """
        data: is a list of tuples with (wav, label)
@@ -57,7 +64,7 @@ def collate_fn(batch):
 
 # # noise augmntation testing
 
-# if name == '__main__':
+# if __name__ == '__main__':
 #     train = AudioDataset(data_dir='/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_v2/train-clean-100',
 #                  transform=NoiseAugmentation(noise_dir='/data/saten/diana/SpeakingRateEstimation/data/ESC-50-master/audio'))
 #     from scipy.io.wavfile import write
@@ -68,3 +75,4 @@ def collate_fn(batch):
 #         audio_data = x[0].numpy()  # Convert tensor to numpy array
 #         sample_rate = 16000  # Replace with your sample rate
 #         write(f'./test/audio_{i}.wav', sample_rate, audio_data)
+

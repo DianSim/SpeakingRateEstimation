@@ -28,10 +28,10 @@ class NoiseAugmentation(torch.nn.Module):
         epsilon = torch.tensor(1e-8)
         audio_energy = torch.sum(audio ** 2).item()
         noise_energy = torch.sum(noise ** 2).item()
-        
+
         # Calculate scaling factor for noise to achieve desired SNR
         scaling_factor = torch.sqrt(audio_energy / (10**(snr / 10) * noise_energy + epsilon))
-        
+
         # Add scaled noise to original audio
         noisy_audio = audio + scaling_factor * noise
         return noisy_audio

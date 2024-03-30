@@ -27,7 +27,7 @@ class AudioDataset(Dataset):
 
     def __len__(self):
         return len(self.file_list)
-        
+
     def __getitem__(self, idx):
         file_path = self.file_list[idx]
         waveform, sample_rate = torchaudio.load(file_path)
@@ -37,12 +37,19 @@ class AudioDataset(Dataset):
         if self.transform:
             waveform = self.transform(waveform)
 
+        # normalization
+        mean = torch.mean(waveform)
+        std = torch.std(waveform)
+
+        waveform = waveform - mean
+        waveform = waveform / std
+
         mfcc = self.mfcc_transform(waveform)
         file_name = file_path.split(os.path.sep)[-1]
         label = file_name.split('.')[0].split('_')[0]
         label = torch.tensor(int(label), dtype=torch.int32)
         return mfcc, label.type(torch.LongTensor)
-    
+
     def right_pad(self, wave):
         signal_length = wave.shape[0]
         # Can not be bigger as we took dataset max length as input_len

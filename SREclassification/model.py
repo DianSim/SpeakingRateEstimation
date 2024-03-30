@@ -6,18 +6,18 @@ import torch.nn.functional as F
 
 
 class LSTMClassification(pl.LightningModule):
-    """Simple LSTM-RNN to predict speaking rate 
-        
+    """Simple LSTM-RNN to predict speaking rate
+
         Args:
             input_size: input size of RNN-LSTM
             hidden_size: hidden size of RNN-LSTM
             output_size: output size of RNN-LSTM
     """
-    def __init__(self, input_size=560, hidden_size=128, classes=25):
+    def __init__(self, input_size=560, hidden_size=128, classes=39):
         super().__init__()
         self.classes=classes
-        self.lstm = nn.LSTM(input_size=input_size, 
-                            hidden_size=hidden_size, 
+        self.lstm = nn.LSTM(input_size=input_size,
+                            hidden_size=hidden_size,
                             num_layers=1,
                             batch_first=True)
         self.hidden2out = nn.Linear(hidden_size, self.classes)
@@ -29,7 +29,7 @@ class LSTMClassification(pl.LightningModule):
         lstm_out, (hn, cn) = self.lstm(x)
         out = self.hidden2out(lstm_out[:, -1, :])
         return out
-    
+
     def training_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
@@ -39,7 +39,7 @@ class LSTMClassification(pl.LightningModule):
         self.log('train_top3_accuracy', self.top3_accuracy(y_hat, y))
         self.logger.experiment.add_scalars('loss', {'train': loss}, self.global_step)
         return loss
-    
+
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
@@ -50,17 +50,24 @@ class LSTMClassification(pl.LightningModule):
         self.logger.experiment.add_scalars('loss', {'val': loss}, self.global_step)
         return loss
 
+    def predict_step(self, batch, batch_idx):
+        x, y = batch
+        y_hat = self(x)
+        loss = self.loss(y_hat, y)
+
+        return {'loss':loss, 'accuracy':self.accuracy(y_hat, y), 'top3_accuracy':self.top3_accuracy(y_hat, y)}
+
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
         return optimizer
-    
+
 
 # ----------MatchBoxNet model----------------
 class TCSConv(nn.Module):
     '''
     An implementation of Time-channel Seperable Convolution
 
-    Arguments
+    **Arguments**
     in_channels : int
         The number of input channels to the layers
     out_channels : int
@@ -79,7 +86,7 @@ class TCSConv(nn.Module):
     '''
     def __init__(self, in_channels, out_channels, kernel_size):
         super(TCSConv, self).__init__()
-        
+
         self.depthwise_conv = nn.Conv1d(in_channels, in_channels, kernel_size, groups=in_channels, padding='same')
         self.pointwise_conv = nn.Conv1d(in_channels, out_channels, kernel_size=1)
 
@@ -92,21 +99,21 @@ class SubBlock(nn.Module):
     '''
     An implementation of a sub-block that is repeated R times
 
-    Arguments
+    **Arguments**
     in_channels : int
         The number of input channels to the layers
     out_channels : int
         The requested number of output channels of the layers
     kernel_size : int
         The size of the convolution kernel
-    
+
     residual : None or torch.Tensor
         Only applicable for the final sub-block. If not None, will add 'residual' after batchnorm layer
 
     Example
     -------
     >>> inputs = torch.randn(1, 128, 600)
-    
+
     >>> subblock = SubBlock(128, 64, 13)
     >>> outputs = subblock(inputs)
     >>> outputs.shape
@@ -134,12 +141,12 @@ class SubBlock(nn.Module):
         x = self.dropout(x)
 
         return x
-    
+
 class MainBlock(nn.Module):
     '''
     An implementation of the residual block containing R repeating sub-blocks
 
-    Arguments
+    **Arguments**
     in_channels : int
         The number of input channels to the residual block
     out_channels : int
@@ -148,14 +155,14 @@ class MainBlock(nn.Module):
         The size of the convolution kernel
     R : int
         The number of repeating sub-blocks contained within this residual block
-    
+
     residual : None or torch.Tensor
         Only applicable for the final sub-block. If not None, will add 'residual' after batchnorm layer
 
     Example
     -------
     >>> inputs = torch.randn(1, 128, 300)
-    
+
     >>> block = MainBlock(128, 64, 13, 3)
     >>> outputs = block(inputs)
     >>> outputs.shape
@@ -182,7 +189,7 @@ class MainBlock(nn.Module):
             self.sub_blocks.append(
                 SubBlock(self.out_channels, self.out_channels, self.kernel_size)
             )
-    
+
     def forward(self, x):
         residual = self.residual_pointwise(x)
         residual = self.residual_batchnorm(residual)
@@ -193,12 +200,12 @@ class MainBlock(nn.Module):
             else:
                 x = layer(x)
         return x
-    
+
 class MatchboxNet(nn.Module):
     '''
-    The input is expected to be 64 channel MFCC features 
+    The input is expected to be 64 channel MFCC features
 
-    Arguments
+    **Arguments**
     B : int
         The number of residual blocks in the model
     R : int
@@ -214,13 +221,13 @@ class MatchboxNet(nn.Module):
     Example
     -------
     >>> inputs = torch.randn(1, 64, 141)
-    
+
     >>> model = MatchboxNet(B=3, R=2, C=64, NUM_CLASSES=25)
     >>> outputs = model(inputs)
     >>> outputs.shape
     torch.Size([1, 25])
     '''
-    def __init__(self, B, R, C, NUM_CLASSES=25, kernel_sizes=None): 
+    def __init__(self, B, R, C, NUM_CLASSES=25, kernel_sizes=None):
         super(MatchboxNet, self).__init__()
         self.num_classes = NUM_CLASSES
         if not kernel_sizes:
@@ -250,10 +257,10 @@ class MatchboxNet(nn.Module):
         self.epilogue_bnorm2 = nn.BatchNorm1d(128)
 
         self.epilogue_conv3 = nn.Conv1d(128,  self.num_classes, kernel_size=1)
-        
+
         # Pool the timesteps into a single dimension using simple average pooling
         self.epilogue_adaptivepool = nn.AdaptiveAvgPool1d(1)
-        
+
     def forward(self, x):
         # inpute shape (64, 141)
         # prologue block
@@ -278,18 +285,19 @@ class MatchboxNet(nn.Module):
         # print('epilogue2: ', x.shape)
 
         x = self.epilogue_conv3(x) # (128, 10) > (25, 10)
-        # print('epilogue3: ', x.shape)      
+        # print('epilogue3: ', x.shape)
 
         x = self.epilogue_adaptivepool(x) # (25, 10) > (25, 1)
         # print('adaptivepool: ', x.shape)
 
-        x = x.squeeze(2) # (N, 25, 1) > (N, 25)  
+        x = x.squeeze(2) # (N, 25, 1) > (N, 25)
         # print('output: ', x.shape)
         return x
-    
+
+
 class MatchBoxNetclass(pl.LightningModule):
     """
-        Arguments
+        **Arguments**
         B : int
             The number of residual blocks in the model
         R : int
@@ -303,7 +311,7 @@ class MatchBoxNetclass(pl.LightningModule):
             The number of classes in the dataset (i.e. number of keywords.) Defaults to 30 to match the Google Speech Commands Dataset
     """
 
-    def __init__(self, B, R, C, kernel_sizes=None, NUM_CLASSES=25):
+    def __init__(self, B, R, C, kernel_sizes=None, NUM_CLASSES=39):
         super().__init__()
         self.classes=NUM_CLASSES
         self.matchboxnet = MatchboxNet(B, R, C, NUM_CLASSES, kernel_sizes)

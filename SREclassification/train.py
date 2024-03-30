@@ -24,21 +24,9 @@ train_dataloader, val_dataloader, test_dataloader = data_setup.create_dataloader
     transform=NoiseAugmentation(noise_dir=config['noise_dir'])
 )
 
-model = model.MatchBoxNetclass(B=6, R=2, C=64)
-
-# for x in train_dataloader:
-#     print(model(x[0]).shape)
-#     break
+model = model.MatchBoxNetclass(B=3, R=2, C=112)
 
 # model = model.LSTMClassification()
-
-# for x in train_dataloader:
-#     print(x[1].dtype)
-#     y = model(x[0])
-#     print(y.dtype)
-#     print(x[1].shape)
-#     print(y.shape)
-#     break
 
 trainer = build_trainer(config)
 trainer.fit(model, train_dataloader, val_dataloader)
