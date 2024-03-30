@@ -31,4 +31,4 @@ def sample_rate_list(dir):
 
 
 # --------------------------------Testing--------------------------------
-print(sample_rate_list('/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/train-clean-100-fast-augmented/train-clean-100'))
+print(sample_rate_list('/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed'))

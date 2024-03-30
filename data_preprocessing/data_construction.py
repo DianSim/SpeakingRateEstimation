@@ -10,7 +10,7 @@ import numpy as np
 """Builder of data version 1"""
 
 def speaking_rate(transcript):
-    """The function computes syllable based speaking rate 
+    """The function computes syllable based speaking rate
     of an audio with given transcript
     transcript(str): transcript of the audio
     """
@@ -25,13 +25,13 @@ def speaking_rate(transcript):
 
 def chuncking_labeling(dir, chunck_length):
     """"
-    Splits the audios of the given dir into chunks, computes the labels 
+    Splits the audios of the given dir into chunks, computes the labels
     and saves in a folder 'LibriSpeechChuncked' with the same structure as dir
     setting lables as audio titles
 
     chunck_length: chunk length with seconds
     """
-    
+
     for root, dirs, files in os.walk(dir):
         word_trans_file = None
         for file in files:
@@ -39,7 +39,7 @@ def chuncking_labeling(dir, chunck_length):
                 word_trans_file = os.path.join(root, file)
         if word_trans_file is None:
             continue
-        
+
         folder_file_title_count = {}
         df_word_trans = pd.read_csv(word_trans_file, delimiter='\t', header=None)
         for file in files:
@@ -71,12 +71,12 @@ def chuncking_labeling(dir, chunck_length):
                             if i_end != i_begin:
                                 i_end -= 1 # for i_end the condition deosn't hold
 
-                            # test whether to add next word 
+                            # test whether to add next word
                             # because of this very long chunks arose 4 - 6 second
                             if (i_end + 1 < len(words)) and  (chunck_end - tm_stemps[i_end]) > (tm_stemps[i_end+1] - chunck_end):
                                 i_end += 1
 
-                            chunk_words = words[i_begin:i_end+1] 
+                            chunk_words = words[i_begin:i_end+1]
 
                             # remove silence chunks
                             if len(chunk_words) == 1 and chunk_words[0] == '':
@@ -90,7 +90,7 @@ def chuncking_labeling(dir, chunck_length):
                             print('length: ', exact_chnk_len)
                             speak_rate = speaking_rate(transcript)
                             print('sr:', speak_rate)
-                    
+
                             # remove silence at the beggining of the chunck
                             if chunk_words[0] == '':
                                 chunck_begin = tm_stemps[i_begin]
@@ -135,7 +135,7 @@ def chuncking_labeling(dir, chunck_length):
                             sf.write(os.path.join(save_dir, filename), x, sr)
                             print(os.path.join(save_dir, filename))
                             print()
-                            
+
                             i_begin = i_end + 1
 
 

@@ -17,7 +17,7 @@ def class_distr(sprs, prefix, folder):
     plt.xticks(ticks=range(len(keys)), labels=sorted(keys))
     plt.tight_layout()
     plt.savefig(os.path.join(folder, f'{prefix}_class_distr.png'))
-    print(value_counts) 
+    print(value_counts)
 
 
 def save(arr, xlabel, title, save_path):
@@ -30,9 +30,9 @@ def save(arr, xlabel, title, save_path):
 
 
 def stat(dir, save_dir, split):
-    """Computes speaking rate distribution and chunck length distribution 
+    """Computes speaking rate distribution and chunck length distribution
     of the audios in the given folder and saves in the 'save_dir' folder as png
-    
+
     split: split name (train/val/test)"""
 
     os.makedirs(save_dir, exist_ok=True)
@@ -60,12 +60,19 @@ def stat(dir, save_dir, split):
 
 
 if __name__ == '__main__':
-    save_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/Statitics/LibriSpeechChuncked_sil_removed'
-    val_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/dev-clean'
-    test_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/test-clean'
-    train_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/train-clean-100'
+    # save_dir = '/data/saten/diana/SpeakingRateEstimation/data/Statistics/LibriSpeechChuncked_sil_removed'
+    # val_dir = '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/dev-clean'
+    # test_dir = '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/test-clean'
+    # train_dir = '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/train-clean-100'
 
-    stat(val_dir, save_dir, 'val')
-    stat(test_dir, save_dir, 'test')
-    stat(train_dir, save_dir, 'train')
 
+    # stat(val_dir, save_dir, 'val')
+    # stat(test_dir, save_dir, 'test')
+    # stat(train_dir, save_dir, 'train')
+
+    dir = '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/train-clean-100-fast-augmented'
+
+    stat(dir, '/data/saten/diana/SpeakingRateEstimation/data/Statistics/LibriSpeechChuncked_sil_removed', 'train-fast-augmented')
+    # file = '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChunked_train_fast_2x/train-clean-100/19/198/16_3.wav'
+    # signal, sr = sf.read(file)
+    # print(sr)

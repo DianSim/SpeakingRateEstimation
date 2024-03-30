@@ -2,7 +2,7 @@ import os
 import shutil
 
 def merge(dir):
-    """Merges word based allignments in the given directory(dir) 
+    """Merges word based allignments in the given directory(dir)
     with Librispeech dataset. Allignments' dir's structure
     is the same as dataset's structure"""
     for root, dirs, files in os.walk(dir):
@@ -17,6 +17,6 @@ def merge(dir):
                     shutil.copy(soure, dst_dir)
 
 
-allignment_dir = '/Users/dianasimonyan/Desktop/Thesis/Implementation/datasets/LibriSpeech-Alignments/LibriSpeech'
+allignment_dir = '/data/saten/diana/data/LibriSpeech-Alignments'
 if __name__ == '__main__':
     merge(allignment_dir)

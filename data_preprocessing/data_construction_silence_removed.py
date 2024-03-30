@@ -1,3 +1,4 @@
+# data_construction_silence_removed.py
 import os
 import soundfile as sf
 import pandas as pd
@@ -7,10 +8,10 @@ import math
 import numpy as np
 
 
-# /train-clean-100/481/123720/3_8.wav - 2.8000625
+# /train-clean-100/481/123720/3_11.wav - 2.8000625
 
 def speaking_rate(transcript):
-    """The function computes syllable based speaking rate 
+    """The function computes syllable based speaking rate
     of an audio with given transcript
 
     transcript(str): transcript of the audio
@@ -26,13 +27,12 @@ def speaking_rate(transcript):
 
 def chuncking_labeling(dir, chunck_length):
     """"
-    Splits the audios of the given dir into chunks, computes the labels 
+    Splits the audios of the given dir into chunks, computes the labels
     and saves in a folder 'LibriSpeechChuncked' with the same structure as dir
     setting lables as audio titles
 
     chunck_length: chunk length with seconds
     """
-    
     for root, dirs, files in os.walk(dir):
         word_trans_file = None
         for file in files:
@@ -40,11 +40,11 @@ def chuncking_labeling(dir, chunck_length):
                 word_trans_file = os.path.join(root, file)
         if word_trans_file is None:
             continue
-        
+
         folder_file_title_count = {}
         df_word_trans = pd.read_csv(word_trans_file, delimiter='\t', header=None)
         for file in files:
-            if file[-5:] == '.flac': 
+            if file[-5:] == '.flac':
                 signal, sr = sf.read(os.path.join(root, file))
                 for row in df_word_trans[0]:
                     if row.split(' ')[0] == file.split('.')[0]:
@@ -61,7 +61,7 @@ def chuncking_labeling(dir, chunck_length):
                         print()
                         print('-'*60+'chunking'+'-'*60)
                         print()
-        
+
                         silence_removed_tms = list(tm_stemps)
                         for i, word in enumerate(words):
                             if word == '':
@@ -69,7 +69,7 @@ def chuncking_labeling(dir, chunck_length):
                                 # shift words after silence by silence length
                                 for j in range(i+1, len(silence_removed_tms)):
                                     silence_removed_tms[j] -= sil_len
-                        
+
                         i_begin = 0
                         while i_begin < len(words):
                             i_end = i_begin
@@ -91,11 +91,11 @@ def chuncking_labeling(dir, chunck_length):
                                     i_end += 1
                                 else:
                                     break
-                                
+
                             if i_end != i_begin:
                                 i_end -= 1 # for i_end the condition deosn't hold
 
-                            chunk_words = words[i_begin:i_end+1] 
+                            chunk_words = words[i_begin:i_end+1]
 
                             transcript = ' '.join(chunk_words)
 
@@ -109,7 +109,7 @@ def chuncking_labeling(dir, chunck_length):
                                 x = signal[math.floor(chunck_begin*sr): round(tm_stemps[i_end]*sr) + 1]
                             else:
                                 sil_begin = tm_stemps[i_silence[0]-1] if i_silence[0] else 0
-                                splits = [signal[math.floor(chunck_begin*sr): round(sil_begin*sr) + 1]]  
+                                splits = [signal[math.floor(chunck_begin*sr): round(sil_begin*sr) + 1]]
                                 for i in range(len(i_silence)):
                                     if i+1 < len(i_silence):
                                         # from end of 1st sil to beginning of 2nd
@@ -117,7 +117,7 @@ def chuncking_labeling(dir, chunck_length):
                                         i_sil_right = i_silence[i+1]
                                         splt = signal[math.floor(tm_stemps[i_sil_left]*sr): round(tm_stemps[i_sil_right -1]*sr) + 1]
                                         splits.append(splt)
-                                        
+
                                 last_splt = signal[math.floor(tm_stemps[i_silence[-1]]*sr): round(tm_stemps[i_end]*sr) + 1]
                                 splits.append(last_splt)
                                 x = np.concatenate(splits)
@@ -126,12 +126,21 @@ def chuncking_labeling(dir, chunck_length):
                             silence_len = int(0.02*16000) # should be determined somehow
                             x = np.pad(x, (silence_len, 0), 'constant', constant_values=0)
                             exact_chunck_len = x.shape[0]/sr
-                            
 
-                            save_dir = root.replace('LibriSpeech', 'LibriSpeechChuncked_v2')
 
-                            if not os.path.exists(save_dir):
-                                os.makedirs(save_dir)
+                            # save_dir = root.replace('LibriSpeech', 'LibriSpeechChuncked_sil_removed')
+
+                            save_dir_4 = root.replace('LibriSpeech', 'LibriSpeechChuncked_train_4sec')
+                            save_dir_3 = root.replace('LibriSpeech', 'LibriSpeechChuncked_train_3sec')
+
+                            if not os.path.exists(save_dir_4):
+                                os.makedirs(save_dir_4)
+
+                            if not os.path.exists(save_dir_3):
+                                os.makedirs(save_dir_3)
+
+                            # if not os.path.exists(save_dir):
+                            #     os.makedirs(save_dir)
 
                             filename = str(speak_rate)
                             if filename not in folder_file_title_count:
@@ -141,14 +150,26 @@ def chuncking_labeling(dir, chunck_length):
                                 filename += f'_{folder_file_title_count[filename]}'
                             filename += '.wav'
 
-                            sf.write(os.path.join(save_dir, filename), x, sr)
                             print('transcripts: ', transcript)
                             print(f'exact chunck length: {exact_chunck_len}')
-                            print(os.path.join(save_dir, filename)) 
-                            print()          
+
+                            # print(os.path.join(save_dir, filename))
+                            # sf.write(os.path.join(save_dir, filename), x, sr)
+
+                            if exact_chunck_len >= 3.8:
+                                print(os.path.join(save_dir_4, filename))
+                                sf.write(os.path.join(save_dir_4, filename), x, sr)
+                            elif exact_chunck_len > 2.8 and exact_chunck_len < 3.3:
+                                print(os.path.join(save_dir_3, filename))
+                                sf.write(os.path.join(save_dir_3, filename), x, sr)
+
+                            print()
+                            # if exact_chunck_len > 2.5:
+                            #     print(os.path.join(save_dir, filename))
+
                             i_begin = i_end + 1
 
 
 if __name__ == '__main__':
-    dir = '/Users/dianasimonyan/Desktop/Thesis/Implementation/datasets/LibriSpeech/train-clean-100'
-    chuncking_labeling(dir, 2)
+    dir = '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeech/train-clean-100'
+    chuncking_labeling(dir, 4)
