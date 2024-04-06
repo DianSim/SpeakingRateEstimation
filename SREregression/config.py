@@ -1,5 +1,5 @@
 config ={
-    'model_name': 'rMatchBoxNet-3x2x112',
+    'model_name': 'rLSTM300epoch',
     'model_dir': '/data/saten/diana/SpeakingRateEstimation/SREregression/Models',
     'noise_dir': '/data/saten/diana/SpeakingRateEstimation/data/ESC-50_16khz/audio',
     'train_dir': '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/train-clean-100-fast-augmented',
@@ -12,7 +12,7 @@ config ={
     'window_shift': 10,
     'train_params': {
         'batch_size': 200,
-        'max_epochs':200,
+        'max_epochs':300,
         'steps_per_epoch': None,
         # 'latest_checkpoint_step': 1,
         # 'summary_step': 50,

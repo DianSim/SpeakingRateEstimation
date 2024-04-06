@@ -1,3 +1,5 @@
+# model.py
+
 import torch
 from torch import nn
 import pytorch_lightning as pl
@@ -318,6 +320,7 @@ class MatchBoxNetclass(pl.LightningModule):
         self.loss = nn.CrossEntropyLoss()
         self.accuracy = Accuracy(task="multiclass", num_classes=self.classes)
         self.top3_accuracy = Accuracy(top_k=3, task="multiclass", num_classes=self.classes)
+        self.mse = nn.MSELoss()
 
     def forward(self, x):
         out = self.matchboxnet(x)
@@ -348,7 +351,10 @@ class MatchBoxNetclass(pl.LightningModule):
         y_hat = self(x)
         loss = self.loss(y_hat, y)
 
-        return {'loss':loss, 'y_hat':y_hat, 'y':y, 'acc': self.accuracy(y_hat, y), 'top3_acc': self.top3_accuracy(y_hat, y)}
+        y_classes = torch.argmax(y_hat, dim=1)
+        mse = self.mse(y_classes.float(), y.float())# 'mse': mse,
+
+        return {'loss':loss, 'mse': mse, 'accuracy': self.accuracy(y_hat, y), 'top3_accuracy':self.top3_accuracy(y_hat, y), 'y_pred': y_classes, 'y':y}
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=0.001)

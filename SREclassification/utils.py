@@ -1,3 +1,4 @@
+# utils.py
 """
 Contains various utility functions for PyTorch model training and saving.
 """
@@ -46,14 +47,17 @@ def avg_loss_metric_from_batch_list(predictions):
     total_loss = 0
     total_acc = 0
     total_top3_acc = 0
+    total_mse = 0
     for pred in predictions:
         total_loss += pred['loss']
         total_acc += pred['accuracy']
         total_top3_acc += pred['top3_accuracy']
+        total_mse += pred['mse']
     avg_loss = total_loss/len(predictions)
     avg_acc = total_acc/len(predictions)
     avg_top3_acc = total_top3_acc/len(predictions)
-    return avg_loss, avg_acc, avg_top3_acc
+    avg_mse = total_mse/len(predictions)
+    return avg_loss, avg_mse, avg_acc, avg_top3_acc
 
 
 def save_as_img(x, dir, name):

@@ -75,4 +75,3 @@ def collate_fn(batch):
 #         audio_data = x[0].numpy()  # Convert tensor to numpy array
 #         sample_rate = 16000  # Replace with your sample rate
 #         write(f'./test/audio_{i}.wav', sample_rate, audio_data)
-

@@ -1,4 +1,3 @@
-# config.py
 config ={
     'model_name': 'cMatchBoxNet-3x2x112',
     'model_dir': '/data/saten/diana/SpeakingRateEstimation/SREclassification/Models',

@@ -1,4 +1,3 @@
-# data_construction_silence_removed.py
 import os
 import soundfile as sf
 import pandas as pd
