@@ -1,0 +1,5 @@
+max speaking rate(train-fast-augmented): 38
+number of audios (train-fast-augmented): 222453
+max length (train-fast-augmented): 2.193625
+min length (train-fast-augmented): 0.0200625
+max length in samples (train-fast-augmented): 35098

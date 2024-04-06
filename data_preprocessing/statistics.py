@@ -60,19 +60,18 @@ def stat(dir, save_dir, split):
 
 
 if __name__ == '__main__':
-    # save_dir = '/data/saten/diana/SpeakingRateEstimation/data/Statistics/LibriSpeechChuncked_sil_removed'
-    # val_dir = '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/dev-clean'
-    # test_dir = '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/test-clean'
-    # train_dir = '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/train-clean-100'
+    # save_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/Statitics/LibriSpeechChuncked_sil_removed'
+    # val_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/dev-clean'
+    # test_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/test-clean'
+    # train_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/train-clean-100'
 
 
     # stat(val_dir, save_dir, 'val')
     # stat(test_dir, save_dir, 'test')
     # stat(train_dir, save_dir, 'train')
 
-    dir = '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/train-clean-100-fast-augmented'
-
-    stat(dir, '/data/saten/diana/SpeakingRateEstimation/data/Statistics/LibriSpeechChuncked_sil_removed', 'train-fast-augmented')
+    dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/train-clean-100-fast-augmented'
+    stat(dir, '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/Statitics/LibriSpeechChuncked_sil_removed', 'train-fast-augmented')
     # file = '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChunked_train_fast_2x/train-clean-100/19/198/16_3.wav'
     # signal, sr = sf.read(file)
     # print(sr)

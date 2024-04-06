@@ -1,0 +1,5 @@
+max speaking rate(train_3sec): 28
+number of audios (train_3sec): 4017
+max length (train_3sec): 3.290375
+min length (train_3sec): 2.8000625
+max length in samples (train_3sec): 52646

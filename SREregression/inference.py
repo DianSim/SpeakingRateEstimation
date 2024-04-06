@@ -23,6 +23,7 @@ audio, sr = librosa.load(args.audio_path, sr=config['sample_rate'])
 # -----------------------data preprocessing-----------------------
 audio = torch.from_numpy(audio)
 chunks = list(torch.split(audio, config['input_len']))
+
 # # testing correctness
 # if (chunks[0] != audio[:config['input_len']]).sum() == 0:
 #     print('Correct chunking')

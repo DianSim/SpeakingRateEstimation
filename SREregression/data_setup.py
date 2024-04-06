@@ -5,8 +5,8 @@ audio data speaking rate estimation task.
 import os
 from torch.utils.data import DataLoader
 from config import config
-from LSTM.dataset import AudioDataset, collate_fn
-# from MatchBoxNet.dataset import AudioDataset
+# from LSTM.dataset import AudioDataset, collate_fn
+from MatchBoxNet.dataset import AudioDataset
 
 def create_dataloaders(
         train_dir: str,

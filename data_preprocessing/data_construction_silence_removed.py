@@ -170,5 +170,5 @@ def chuncking_labeling(dir, chunck_length):
 
 
 if __name__ == '__main__':
-    dir = '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeech/train-clean-100'
+    dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeech/train-clean-100'
     chuncking_labeling(dir, 4)

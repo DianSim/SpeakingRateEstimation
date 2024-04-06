@@ -28,10 +28,6 @@ train_dataloader, val_dataloader, test_dataloader = data_setup.create_dataloader
 
 model = model.MatchBoxNetclass(B=3, R=2, C=112)
 
-# for x in train_dataloader:
-#     print(model(x[0]).shape)
-#     break
-
 # model = model.LSTMClassification()
 
 trainer = build_trainer(config)

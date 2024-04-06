@@ -4,7 +4,7 @@ import pytorch_lightning as pl
 import data_setup, model, utils
 from utils import build_trainer
 from config import config
-from LSTM.dataset import collate_fn
+# from LSTM.dataset import collate_fn
 from augmentation import NoiseAugmentation
 
 # for MatchBoxNet change the model to MatchBoxNetreg, config['model_name'] to 'MatchBoxNetreg'
@@ -20,19 +20,15 @@ train_dataloader, val_dataloader, test_dataloader = data_setup.create_dataloader
     train_dir=train_dir,
     test_dir=test_dir,
     val_dir = val_dir,
-    num_workers=50,
+    num_workers=12,
     batch_size=config['train_params']['batch_size'],
-    collate_fn = collate_fn,
+    # collate_fn = collate_fn,
     transform=NoiseAugmentation(noise_dir=config['noise_dir'])
 )
 
-# model = model.MatchBoxNetreg(B=3, R=2, C=112)
+model = model.MatchBoxNetreg(B=3, R=2, C=112)
 
-# for x in train_dataloader:
-#     print(x[0].shape)
-#     break
-
-model = model.LSTMRegression()
+# model = model.LSTMRegression()
 
 trainer = build_trainer(config)
 trainer.fit(model, train_dataloader, val_dataloader)
