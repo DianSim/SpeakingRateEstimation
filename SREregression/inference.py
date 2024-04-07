@@ -58,20 +58,20 @@ def inference(model, model_chckp, audio_path):
     model.eval()
 
     pred = model(batch_of_chuncks)
-    print(pred)
 
     return {'syl_count': pred.sum(), 'speaking_rate': pred.sum()/(audio.shape[0]/sr)}
 
 
+if __name__ == "__main__":
 
-parser = argparse.ArgumentParser(description="Inference script for the Speaking Rate Estimation model.")
-parser.add_argument('--audio', dest="audio_path", type=str, help="The path to the audio file to compute the speaking rate for.")
-args = parser.parse_args()
+    parser = argparse.ArgumentParser(description="Inference script for the Speaking Rate Estimation model.")
+    parser.add_argument('--audio', dest="audio_path", type=str, help="The path to the audio file to compute the speaking rate for.")
+    args = parser.parse_args()
 
-# -----------------------inference-----------------------
-model = model.MatchBoxNetreg(B=3, R=2, C=112)
-path = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/SREregression/models/rMatchBoxNet-3x2x112/checkpoints/best-epoch=198-val_loss=1.50-val_pcc=0.93.ckpt'
+    # -----------------------inference-----------------------
+    model = model.MatchBoxNetreg(B=3, R=2, C=112)
+    path = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/SREregression/models/rMatchBoxNet-3x2x112/checkpoints/best-epoch=198-val_loss=1.50-val_pcc=0.93.ckpt'
 
-pred = inference(model, path, args.audio_path)
-print('Syl count: ' , pred['syl_count'])
-print('Speaking rate: ', pred['speaking_rate'])
+    pred = inference(model, path, args.audio_path)
+    print('Syl count: ' , pred['syl_count'])
+    print('Speaking rate: ', pred['speaking_rate'])

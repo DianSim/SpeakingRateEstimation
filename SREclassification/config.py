@@ -1,5 +1,5 @@
 config ={
-    'model_name': 'cMatchBoxNet-3x2x112',
+    'model_name': 'cMatchBoxNet-6x2x64',
     'model_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/SREclassification/models',
     'noise_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/ESC-50_16khz/audio',
     'train_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/train-clean-100-fast-augmented',
