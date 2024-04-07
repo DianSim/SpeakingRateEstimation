@@ -20,7 +20,7 @@ train_dataloader, val_dataloader, test_dataloader = data_setup.create_dataloader
     train_dir=train_dir,
     test_dir=test_dir,
     val_dir = val_dir,
-    num_workers=50,
+    num_workers=12,
     batch_size=config['train_params']['batch_size'],
     # collate_fn = collate_fn,
     transform=NoiseAugmentation(noise_dir=config['noise_dir'])

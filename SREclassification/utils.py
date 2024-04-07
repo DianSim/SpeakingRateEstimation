@@ -18,7 +18,7 @@ def build_trainer(config):
     # checkpoint callback
     checkpoint_callback = ModelCheckpoint(
         dirpath=ckpt_dir,
-        filename='best-{epoch:02d}-{val_loss:.2f}-{val_pcc:.2f}',
+        filename='best-{epoch:02d}-{val_loss:.2f}-{val_accuracy:.2f}-{val_top3_accuracy:.2f}',
         save_top_k=5,
         verbose=True,
         monitor='val_loss',
@@ -32,7 +32,9 @@ def build_trainer(config):
 
     # Create a PyTorch Lightning trainer with the generation of logs disabled
     trainer = Trainer(max_epochs=config['train_params']['max_epochs'],
-                      gpus=[3], # [0,1,2,3]
+                      devices=1,
+                      accelerator="gpu",
+                    #   gpus=[3], # [0,1,2,3]
                       logger=tensorboard_logger,
                       callbacks=[checkpoint_callback]
                       )

@@ -3,6 +3,7 @@ python -m pip install scipy
 pip install scikit-learn
 pip install pandas
 pip install tqdm
+pip install librosa
 python -m pip install -U matplotlib
 python -m pip install lightning
 pip install tensorboard
