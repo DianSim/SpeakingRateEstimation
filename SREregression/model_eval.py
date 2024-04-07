@@ -18,17 +18,17 @@ train_dataloader, val_dataloader, test_dataloader = data_setup.create_dataloader
     train_dir=train_dir,
     test_dir=test_dir,
     val_dir = val_dir,
-    num_workers=50,
+    num_workers=12,
     batch_size=config['train_params']['batch_size'],
-    collate_fn = collate_fn
+    # collate_fn = collate_fn
     )
 
-model = model.MatchBoxNetreg(B=6, R=2, C=64)
+model = model.MatchBoxNetreg(B=3, R=2, C=112)
 # model = model.LSTMRegression()
 
 #LOAD THE MODEL FROM CKPT
 
-path = '/data/saten/diana/SpeakingRateEstimation/SREregression/Models/rLSTM300epoch/checkpoints/best-epoch=188-val_loss=2.94-val_pcc=0.86.ckpt'
+path = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/SREregression/models/rMatchBoxNet-3x2x112/checkpoints/best-epoch=198-val_loss=1.50-val_pcc=0.93.ckpt'
 state_dict = torch.load(path)
 model.load_state_dict(state_dict['state_dict'])
 model.eval()
