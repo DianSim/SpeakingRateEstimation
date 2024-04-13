@@ -12,7 +12,7 @@ import torchaudio.transforms as T
 config_feature = config['feature']
 
 
-def inference(model, model_chckp, audio_path):
+def inference(model, audio_path):
     """The function implements inference part of the model 
     and returns number of syllables and speaking rate of the given audio"""
 
@@ -53,11 +53,10 @@ def inference(model, model_chckp, audio_path):
     chunck_mfccs = [mfcc_transform(chunk) for chunk in chunks]
     batch_of_chuncks = torch.stack(chunck_mfccs, dim=0)
 
-    state_dict = torch.load(model_chckp)
-    model.load_state_dict(state_dict['state_dict'])
-    model.eval()
 
-    pred = model(batch_of_chuncks)
+    model.eval()
+    with torch.no_grad():
+        pred = model(batch_of_chuncks)
 
     return {'syl_count': pred.sum(), 'speaking_rate': pred.sum()/(audio.shape[0]/sr)}
 
@@ -72,6 +71,10 @@ if __name__ == "__main__":
     model = model.MatchBoxNetreg(B=3, R=2, C=112)
     path = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/SREregression/models/rMatchBoxNet-3x2x112/checkpoints/best-epoch=198-val_loss=1.50-val_pcc=0.93.ckpt'
 
-    pred = inference(model, path, args.audio_path)
+    state_dict = torch.load(path)
+    model.load_state_dict(state_dict['state_dict'])
+   
+
+    pred = inference(model, args.audio_path)
     print('Syl count: ' , pred['syl_count'])
     print('Speaking rate: ', pred['speaking_rate'])

@@ -26,7 +26,7 @@ train_dataloader, val_dataloader, test_dataloader = data_setup.create_dataloader
     transform=NoiseAugmentation(noise_dir=config['noise_dir'])
 )
 
-model = model.MatchBoxNetreg(B=3, R=2, C=112)
+model = model.MatchBoxNetreg(B=3, R=2, C=64)
 
 # model = model.LSTMRegression()
 
