@@ -1,3 +1,8 @@
+conda install pytorch==2.2.1 torchvision==0.17.1 torchaudio==2.2.1 pytorch-cuda=11.8 -c pytorch -c nvidia - (https://pytorch.org/get-started/previous-versions/)
+python -m pip install lightning
+pip install tensorboard
+
+
 pip install soundfile
 python -m pip install scipy
 pip install scikit-learn
@@ -5,10 +10,6 @@ pip install pandas
 pip install tqdm
 pip install librosa
 python -m pip install -U matplotlib
-python -m pip install lightning
-pip install tensorboard
-conda install pytorch==2.1.1 torchvision==0.15.0 torchaudio==2.1.1 pytorch-cuda=11.8 -c pytorch -c nvidia
-pytorch 2.2.1
 
 git push origin master
 source ~/miniforge3/bin/activate
