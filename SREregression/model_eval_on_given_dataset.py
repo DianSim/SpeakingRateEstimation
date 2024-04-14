@@ -18,7 +18,7 @@ model.load_state_dict(state_dict['state_dict'])
 
 model_name = path.split(os.sep)[-3]
 
-data_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/CommonVoice/ru/clips_wav_16khz_labeled'
+data_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/CommonVoice/es/clips_wav_16khz_labeled'
 
 labels_csyl = []
 labels_sp_rate = []
@@ -37,6 +37,8 @@ for root, dirs, files in os.walk(data_dir):
 
             start_time = time.time()
             pred = inference(model, audio_path=file_path)
+            if pred is None:
+                continue
             end_time = time.time()
 
             inference_time = end_time - start_time
@@ -86,7 +88,7 @@ print(f'pcc sp_rate: {pcc_sp_rate.item():.4f}')
 
 # save computed loss and metric in given file
 
-language = 'Russian'
+language = 'Spanish'
 with open("model_eval_res_common_voices.csv", "a", newline="") as f:
     writer = csv.writer(f)
     # writer.writerow(["Model", "Corpus", "#audios", "Language", "MSE_csyl", "PCC_csyl", "MSE_sp_rate", "PCC_sp_rate"])

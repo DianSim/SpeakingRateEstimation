@@ -17,48 +17,53 @@ def inference(model, audio_path):
     and returns number of syllables and speaking rate of the given audio"""
 
     # load audio
-    audio, sr = librosa.load(audio_path, sr=config['sample_rate'])
+    try:
+        audio, sr = librosa.load(audio_path, sr=config['sample_rate'])
 
-    # -----------------------data preprocessing-----------------------
-    audio = torch.from_numpy(audio)
-    mean = torch.mean(audio)
-    std = torch.std(audio)
+        # -----------------------data preprocessing-----------------------
+        audio = torch.from_numpy(audio)
+        mean = torch.mean(audio)
+        std = torch.std(audio)
 
-    audio = audio - mean
-    audio = audio / std
+        audio = audio - mean
+        audio = audio / std
 
-    chunks = list(torch.split(audio, config['input_len']))
+        chunks = list(torch.split(audio, config['input_len']))
 
-    # # testing correctness
-    # if (chunks[0] != audio[:config['input_len']]).sum() == 0:
-    #     print('Correct chunking')
+        # # testing correctness
+        # if (chunks[0] != audio[:config['input_len']]).sum() == 0:
+        #     print('Correct chunking')
 
-    # pad last chunck with 0s if necessary
-    if chunks[-1].shape[0] < config['input_len']:
-        pad_size = config['input_len'] - chunks[-1].shape[0]
-        last_chunk = torch.nn.functional.pad(chunks[-1], pad=(0, pad_size))
-        chunks[-1] = last_chunk
+        # pad last chunck with 0s if necessary
+        if chunks[-1].shape[0] < config['input_len']:
+            pad_size = config['input_len'] - chunks[-1].shape[0]
+            last_chunk = torch.nn.functional.pad(chunks[-1], pad=(0, pad_size))
+            chunks[-1] = last_chunk
 
-    mfcc_transform =  T.MFCC(
-            sample_rate=config['sample_rate'],
-            n_mfcc=config_feature['mfcc_num_mel_bins'], # ??self.fft_length//2 + 1
-            melkwargs={
-                "n_fft": config_feature['window_size_ms']*config['sample_rate']//1000, # length of the FFT window
-                "n_mels": config_feature['mfcc_num_mel_bins'],
-                "hop_length": config_feature['window_stride']*config['sample_rate']//1000,
-                "mel_scale": "htk",
-            }
-        )
+        mfcc_transform =  T.MFCC(
+                sample_rate=config['sample_rate'],
+                n_mfcc=config_feature['mfcc_num_mel_bins'], # ??self.fft_length//2 + 1
+                melkwargs={
+                    "n_fft": config_feature['window_size_ms']*config['sample_rate']//1000, # length of the FFT window
+                    "n_mels": config_feature['mfcc_num_mel_bins'],
+                    "hop_length": config_feature['window_stride']*config['sample_rate']//1000,
+                    "mel_scale": "htk",
+                }
+            )
 
-    chunck_mfccs = [mfcc_transform(chunk) for chunk in chunks]
-    batch_of_chuncks = torch.stack(chunck_mfccs, dim=0)
+        chunck_mfccs = [mfcc_transform(chunk) for chunk in chunks]
+        batch_of_chuncks = torch.stack(chunck_mfccs, dim=0)
 
 
-    model.eval()
-    with torch.no_grad():
-        pred = model(batch_of_chuncks)
+        model.eval()
+        with torch.no_grad():
+            pred = model(batch_of_chuncks)
 
-    return {'syl_count': pred.sum(), 'speaking_rate': pred.sum()/(audio.shape[0]/sr)}
+        return {'syl_count': pred.sum(), 'speaking_rate': pred.sum()/(audio.shape[0]/sr)}
+
+    except Exception as e:
+        print("An error occurred:", e)
+        return None
 
 
 if __name__ == "__main__":

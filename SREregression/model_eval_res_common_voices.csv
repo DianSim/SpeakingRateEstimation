@@ -1,3 +1,6 @@
 Model,Corpus,#audios,Language,MSE_csyl,PCC_csyl,MSE_sp_rate,PCC_sp_rate
 rMatchBoxNet-3x2x112,LibriSpeech-test-clean,2620,English,16.8507,0.9918,0.3168,0.8632
 rMatchBoxNet-3x2x112,Common Voice,14813,Armenian,18.4633,0.9399,0.5852,0.8106
+rMatchBoxNet-3x2x112,Common Voice,163387,Russian,10.7650,0.9593,0.4041,0.8721
+rMatchBoxNet-3x2x112,Common Voice,6717,English,6.5434,0.9233,0.2339,0.8248
+rMatchBoxNet-3x2x112,Common Voice,236600,Italian,104.0783,0.6590,13.2657,0.2781
