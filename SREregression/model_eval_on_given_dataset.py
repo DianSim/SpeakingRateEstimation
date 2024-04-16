@@ -9,6 +9,7 @@ import csv
 import tqdm
 import librosa
 from config import config
+import pickle
 
 
 model = model.MatchBoxNetreg(B=3, R=2, C=112)
@@ -23,12 +24,14 @@ data_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/Commo
 labels_csyl = []
 labels_sp_rate = []
 preds_csyl = []
-preds_sp_rate = []
+preds_sp_rate = [] 
 
 header = True
 corpuse_size = 0
 for root, dirs, files in os.walk(data_dir):
     for file in tqdm.tqdm(files):
+        # if corpuse_size == 100:
+        #     break
         if file[-4:] == '.wav':
             corpuse_size += 1
             file_path = os.path.join(root, file)
@@ -42,6 +45,9 @@ for root, dirs, files in os.walk(data_dir):
             end_time = time.time()
 
             inference_time = end_time - start_time
+
+            if pred['syl_count'].isnan() or pred['speaking_rate'].isnan():
+                continue
 
             preds_csyl.append(pred['syl_count'])
             preds_sp_rate.append(pred['speaking_rate'])
@@ -62,7 +68,19 @@ for root, dirs, files in os.walk(data_dir):
             print('inference time: ', inference_time) 
             print()
             
-            
+# save lists as pickle
+with open('labels_csyl.pkl', 'wb') as f:
+    pickle.dump(labels_csyl, f)
+
+with open('labels_sp_rate.pkl', 'wb') as f:
+    pickle.dump(labels_sp_rate, f)
+
+with open('preds_csyl.pkl', 'wb') as f:
+    pickle.dump(preds_csyl, f)
+
+with open('preds_sp_rate.pkl', 'wb') as f:
+    pickle.dump(preds_sp_rate, f)
+             
 
 MSE = nn.MSELoss()
 PCC = PearsonCorrCoef()
@@ -71,6 +89,7 @@ labels_csyl = torch.tensor(labels_csyl, dtype=torch.float32)
 labels_sp_rate = torch.tensor(labels_sp_rate, dtype=torch.float32)
 preds_csyl = torch.stack(preds_csyl)
 preds_sp_rate = torch.stack(preds_sp_rate)
+   
 
 mse_csyl = MSE(preds_csyl, labels_csyl)
 mse_sp_rate = MSE(preds_sp_rate, labels_sp_rate)
@@ -84,6 +103,7 @@ print()
 
 print(f'mse sp_rate: {mse_sp_rate.item():.4f}')
 print(f'pcc sp_rate: {pcc_sp_rate.item():.4f}')
+
 
 
 # save computed loss and metric in given file
