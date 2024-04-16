@@ -1,0 +1,5 @@
+max speaking rate(test-clean-sil-removed): 182
+number of audios (test-clean-sil-removed): 2620
+max length (test-clean-sil-removed): 30.3009375
+min length (test-clean-sil-removed): 0.690125
+max length in samples (test-clean-sil-removed): 484815

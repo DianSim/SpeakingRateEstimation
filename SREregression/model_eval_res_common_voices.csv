@@ -8,3 +8,5 @@ rMatchBoxNet-3x2x112,Common Voice,292303,Spanish,12.5045,0.9291,0.5307,0.8566
 
 
 
+rMatchBoxNet-3x2x112,LibriSpeech test-clean-sil-removed,2620,English,18.1732,0.9920,0.4815,0.8018
+rMatchBoxNet-3x2x112,LibriSpeech test-clean-sil-removed,2620,English,18.1732,0.9920,0.4815,0.8018
