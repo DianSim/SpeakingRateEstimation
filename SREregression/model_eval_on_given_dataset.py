@@ -1,6 +1,6 @@
 import os
 from inference import inference
-from torchmetrics.regression import PearsonCorrCoef
+from torchmetrics.regression import PearsonCorrCoef, MeanAbsoluteError
 from torch import nn
 import torch
 import model
@@ -13,13 +13,13 @@ import pickle
 
 
 model = model.MatchBoxNetreg(B=3, R=2, C=112)
-path = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/SREregression/models/rMatchBoxNet-3x2x112/checkpoints/best-epoch=198-val_loss=1.50-val_pcc=0.93.ckpt'
+path = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/SREregression/models_4sec/rMatchBoxNet-3x2x112/checkpoints/best-epoch=194-val_loss=4.60-val_pcc=0.95.ckpt'
 state_dict = torch.load(path)
 model.load_state_dict(state_dict['state_dict'])
 
 model_name = path.split(os.sep)[-3]
 
-data_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/CommonVoice/es/clips_wav_16khz_labeled'
+data_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeech/test-clean-labeled'
 
 labels_csyl = []
 labels_sp_rate = []
@@ -83,6 +83,7 @@ with open('preds_sp_rate.pkl', 'wb') as f:
              
 
 MSE = nn.MSELoss()
+MAE = MeanAbsoluteError()
 PCC = PearsonCorrCoef()
 
 labels_csyl = torch.tensor(labels_csyl, dtype=torch.float32)
@@ -92,28 +93,30 @@ preds_sp_rate = torch.stack(preds_sp_rate)
    
 
 mse_csyl = MSE(preds_csyl, labels_csyl)
-mse_sp_rate = MSE(preds_sp_rate, labels_sp_rate)
+mae_csyl = MAE(preds_csyl, labels_csyl)
+mae_sp_rate = MAE(preds_sp_rate, labels_sp_rate)
 
 pcc_csyl = PCC(preds_csyl, labels_csyl)
 pcc_sp_rate = PCC(preds_sp_rate, labels_sp_rate)
 
+print(f'mae csyl: {mae_csyl.item():.4f}')
 print(f'mse csyl: {mse_csyl.item():.4f}')
 print(f'pcc csyl: {pcc_csyl.item():.4f}')
 print()
 
-print(f'mse sp_rate: {mse_sp_rate.item():.4f}')
+print(f'mae sp_rate: {mae_sp_rate.item():.4f}')
 print(f'pcc sp_rate: {pcc_sp_rate.item():.4f}')
 
 
 
 # save computed loss and metric in given file
 
-language = 'Spanish'
-with open("model_eval_res_common_voices.csv", "a", newline="") as f:
+language = 'English'
+with open("model_4sec_eval_res_common_voices.csv", "a", newline="") as f:
     writer = csv.writer(f)
-    # writer.writerow(["Model", "Corpus", "#audios", "Language", "MSE_csyl", "PCC_csyl", "MSE_sp_rate", "PCC_sp_rate"])
-    writer.writerow([model_name, "Common Voice", corpuse_size, language, f'{mse_csyl.item():.4f}', f'{pcc_csyl.item():.4f}',
-                                                                        f'{mse_sp_rate.item():.4f}', f'{pcc_sp_rate.item():.4f}'])
+    writer.writerow(["Model", "Corpus", "#audios", "Language", "MAE_csyl",'MSE_csyl', "PCC_csyl", "MAE_sp_rate", "PCC_sp_rate"])
+    writer.writerow([model_name, "LibriSpeech test-clean", corpuse_size, language, f'{mae_csyl.item():.4f}', f'{mse_csyl.item():.4f}', f'{pcc_csyl.item():.4f}',
+                                                                        f'{mae_sp_rate.item():.4f}', f'{pcc_sp_rate.item():.4f}'])
 
 
 

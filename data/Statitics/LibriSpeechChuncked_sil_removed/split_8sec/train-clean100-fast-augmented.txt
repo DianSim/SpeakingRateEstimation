@@ -1,0 +1,5 @@
+max speaking rate(train-clean100-fast-augmented): 122
+number of audios (train-clean100-fast-augmented): 54207
+max length (train-clean100-fast-augmented): 8.1271875
+min length (train-clean100-fast-augmented): 0.1600625
+max length in samples (train-clean100-fast-augmented): 130035

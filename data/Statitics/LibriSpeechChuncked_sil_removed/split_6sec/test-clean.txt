@@ -1,0 +1,5 @@
+max speaking rate(test-clean): 48
+number of audios (test-clean): 4043
+max length (test-clean): 6.0204375
+min length (test-clean): 0.1200625
+max length in samples (test-clean): 96327

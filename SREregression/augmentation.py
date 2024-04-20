@@ -19,7 +19,7 @@ class NoiseAugmentation(torch.nn.Module):
             if noise.shape[0] > audio.shape[0]:
                 noise = noise[:audio.shape[0]]
             else:
-                noise = F.pad(noise, pad=(0, audio.shape[0]-noise.shape[0]))
+                noise = torch.nn.functional.pad(noise, pad=(0, audio.shape[0]-noise.shape[0]))
             random_snr = torch.randint(0, 21, (1,)).item()
             audio = self.add_noise(audio, noise, random_snr)
         return audio

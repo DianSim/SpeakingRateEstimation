@@ -4,7 +4,7 @@ import pytorch_lightning as pl
 import data_setup, model
 from utils import build_trainer, avg_loss_metric_from_batch_list, abs_error_list,save_histogram_stat
 from config import config
-from LSTM.dataset import collate_fn
+# from LSTM.dataset import collate_fn
 import torch
 import os
 
@@ -28,7 +28,7 @@ model = model.MatchBoxNetreg(B=3, R=2, C=112)
 
 #LOAD THE MODEL FROM CKPT
 
-path = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/SREregression/models/rMatchBoxNet-3x2x112/checkpoints/best-epoch=198-val_loss=1.50-val_pcc=0.93.ckpt'
+path = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/SREregression/models_4sec/rMatchBoxNet-3x2x112/checkpoints/best-epoch=194-val_loss=4.60-val_pcc=0.95.ckpt'
 state_dict = torch.load(path)
 model.load_state_dict(state_dict['state_dict'])
 model.eval()

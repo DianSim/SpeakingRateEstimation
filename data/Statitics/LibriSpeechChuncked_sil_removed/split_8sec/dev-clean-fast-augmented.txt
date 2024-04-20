@@ -1,0 +1,5 @@
+max speaking rate(dev-clean-fast-augmented): 105
+number of audios (dev-clean-fast-augmented): 3512
+max length (dev-clean-fast-augmented): 8.127
+min length (dev-clean-fast-augmented): 0.2800625
+max length in samples (dev-clean-fast-augmented): 130032

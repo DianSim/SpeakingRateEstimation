@@ -1,18 +1,18 @@
 config ={
-    'model_name': 'rMatchBoxNet-3x2x64',
-    'model_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/SREregression/models',
+    'model_name': 'rMatchBoxNet-3x2x112',
+    'model_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/SREregression/models_6sec',
     'noise_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/ESC-50_16khz/audio',
-    'train_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/train-clean-100-fast-augmented',
-    'val_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/dev-clean',
-    'test_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/test-clean',
-    'model_error_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/SREregression/abs_error_histograms',
+    'train_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/split_6sec/train-clean-100-fast-augmented',
+    'val_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/split_6sec/dev-clean-fast-augmented',
+    'test_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/split_6sec/test-clean',
+    'model_error_dir': '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/SREregression/abs_error_histogram_m6sec',
     'sample_rate': 16000,
-    'input_len': 35098, # max input length
+    'input_len': 98034, # change model architectires upper bound  to the train max label
     'frame_length': 35,
     'window_shift': 10,
     'train_params': {
         'batch_size': 200,
-        'max_epochs':200,
+        'max_epochs':300,
         'steps_per_epoch': None,
         # 'latest_checkpoint_step': 1,
         # 'summary_step': 50,

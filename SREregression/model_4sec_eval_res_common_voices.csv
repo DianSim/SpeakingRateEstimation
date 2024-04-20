@@ -1,0 +1,2 @@
+Model,Corpus,#audios,Language,MAE_csyl,MSE_csyl,PCC_csyl,MAE_sp_rate,PCC_sp_rate
+rMatchBoxNet-3x2x112,LibriSpeech test-clean,2620,English,2.3262,10.2358,0.9918,0.3699,0.8626
