@@ -28,7 +28,7 @@ model = model.MatchBoxNetreg(B=3, R=2, C=112)
 
 #LOAD THE MODEL FROM CKPT
 
-path = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/SREregression/models_4sec/rMatchBoxNet-3x2x112/checkpoints/best-epoch=194-val_loss=4.60-val_pcc=0.95.ckpt'
+path = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/SREregression/models_8sec/rMatchBoxNet-3x2x112/checkpoints/best-epoch=66-val_loss=8.65-val_pcc=0.98.ckpt'
 state_dict = torch.load(path)
 model.load_state_dict(state_dict['state_dict'])
 model.eval()

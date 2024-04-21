@@ -282,7 +282,7 @@ class MatchboxNet(nn.Module):
         x = self.epilogue_conv3(x) # (128, 33) > (1, 33)
         x = self.epilogue_adaptivepool(x) # (1, 33) > (1, 1)
         x = x.squeeze(2) # (N, 1, 1) > (N, 1)
-        x = torch.clamp(x, min=0, max=99)
+        x = torch.clamp(x, min=0, max=122)
 
         return x
 

@@ -1,0 +1,8 @@
+Model,chunk size,Corpus,#audios,MAE_csyl,MSE_csyl,PCC_csyl,MAE_sp_rate,PCC_sp_rate
+rMatchBoxNet-3x2x112,2 sec,LibriSpeech test-clean,2620,2.9064,16.8507,0.9918,0.4371,0.8632
+rMatchBoxNet-3x2x112,4 sec,LibriSpeech test-clean,2620,2.3262,10.2358,0.9918,0.3699,0.8626
+rMatchBoxNet-3x2x112,6 sec,LibriSpeech test-clean,2620,3.4083,22.8551,0.9863,0.5092,0.7817
+rMatchBoxNet-3x2x112,8 sec,LibriSpeech test-clean,2620,2.8446,16.5376,0.9878,0.4298,0.8158
+rMatchBoxNet-3x2x112,8 sec,LibriSpeech test-clean֊sil-removed,2620,2.7174,14.3370,0.9887,0.5300,0.7136
+rMatchBoxNet-3x2x112,8 sec,LibriSpeech test-clean֊sil-removed,2620,16.5809,435.8316,0.9912,2.6250,0.6789
+rMatchBoxNet-3x2x112,8 sec,LibriSpeech test-clean֊sil-removed,2620,2.3696,10.8055,0.9919,0.4589,0.7983

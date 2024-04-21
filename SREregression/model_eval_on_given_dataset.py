@@ -19,7 +19,7 @@ model.load_state_dict(state_dict['state_dict'])
 
 model_name = path.split(os.sep)[-3]
 
-data_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeech/test-clean-labeled'
+data_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/CommonVoice/hy-AM/clips_wav_16khz_labeled'
 
 labels_csyl = []
 labels_sp_rate = []
@@ -68,18 +68,18 @@ for root, dirs, files in os.walk(data_dir):
             print('inference time: ', inference_time) 
             print()
             
-# save lists as pickle
-with open('labels_csyl.pkl', 'wb') as f:
-    pickle.dump(labels_csyl, f)
+# # save lists as pickle
+# with open('labels_csyl.pkl', 'wb') as f:
+#     pickle.dump(labels_csyl, f)
 
-with open('labels_sp_rate.pkl', 'wb') as f:
-    pickle.dump(labels_sp_rate, f)
+# with open('labels_sp_rate.pkl', 'wb') as f:
+#     pickle.dump(labels_sp_rate, f)
 
-with open('preds_csyl.pkl', 'wb') as f:
-    pickle.dump(preds_csyl, f)
+# with open('preds_csyl.pkl', 'wb') as f:
+#     pickle.dump(preds_csyl, f)
 
-with open('preds_sp_rate.pkl', 'wb') as f:
-    pickle.dump(preds_sp_rate, f)
+# with open('preds_sp_rate.pkl', 'wb') as f:
+#     pickle.dump(preds_sp_rate, f)
              
 
 MSE = nn.MSELoss()
@@ -111,11 +111,11 @@ print(f'pcc sp_rate: {pcc_sp_rate.item():.4f}')
 
 # save computed loss and metric in given file
 
-language = 'English'
-with open("model_4sec_eval_res_common_voices.csv", "a", newline="") as f:
+language = 'Armenian'
+with open("model_eval_res_common_voices2.csv", "a", newline="") as f:
     writer = csv.writer(f)
-    writer.writerow(["Model", "Corpus", "#audios", "Language", "MAE_csyl",'MSE_csyl', "PCC_csyl", "MAE_sp_rate", "PCC_sp_rate"])
-    writer.writerow([model_name, "LibriSpeech test-clean", corpuse_size, language, f'{mae_csyl.item():.4f}', f'{mse_csyl.item():.4f}', f'{pcc_csyl.item():.4f}',
+    writer.writerow(["Model", "Corpus",'language', '#audios', "MAE_csyl", "MSE_csyl","PCC_csyl", "MAE_sp_rate", "PCC_sp_rate"])
+    writer.writerow([model_name, "Common Voice", language, corpuse_size, f'{mae_csyl.item():.4f}',f'{mse_csyl.item():.4f}', f'{pcc_csyl.item():.4f}',
                                                                         f'{mae_sp_rate.item():.4f}', f'{pcc_sp_rate.item():.4f}'])
 
 
