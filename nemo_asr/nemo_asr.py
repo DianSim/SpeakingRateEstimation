@@ -7,6 +7,10 @@ import tqdm
 from torch import nn
 from torchmetrics.regression import PearsonCorrCoef, MeanAbsoluteError
 import torch
+import pickle
+import csv
+
+
 
 
 def Eng_syl_computing(sentence):
@@ -72,6 +76,7 @@ def eval(asr_model, file_pathes, lngu):
     preds_csyl = []
     preds_sp_rate = []
     
+    corpuse_size = 0
     for file in tqdm.tqdm(file_pathes):
         # print('audio path: ', file)
         
@@ -85,41 +90,45 @@ def eval(asr_model, file_pathes, lngu):
         labels_sp_rate.append(sp_rate)
         # print('sp_rate: ', sp_rate)
         transcript = asr_model.transcribe(file)
+        print(transcript[0])
 
         if lngu == 'eng':
-            pred_csyl = Eng_syl_computing(transcript[0][0])
+            pred_csyl = Eng_syl_computing(transcript[0]) # [0][0] for eng
         elif lngu == 'arm':
-            pred_csyl = AM_syl_computing(transcript[0][0])
+            pred_csyl = AM_syl_computing(transcript[0])
         elif lngu == 'ru':
-            pred_csyl = Ru_syl_computing(transcript[0][0])
+            pred_csyl = Ru_syl_computing(transcript[0])
         elif lngu == 'es':
-            pred_csyl = Sp_syl_computing(transcript[0][0])
+            pred_csyl = Sp_syl_computing(transcript[0])
         elif lngu == 'it':
-            pred_csyl = It_syl_computing(transcript[0][0])
+            pred_csyl = It_syl_computing(transcript[0])
             
         preds_csyl.append(pred_csyl)
         pred_sp_rate = pred_csyl/audio_len
         preds_sp_rate.append(pred_sp_rate)
+        corpuse_size+=1
         
-    return labels_csyl, labels_sp_rate, preds_csyl, preds_sp_rate
+    return corpuse_size, labels_csyl, labels_sp_rate, preds_csyl, preds_sp_rate
         
 
 
 # datasets
-libri_data_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeech/test-clean-labeled'
+# libri_data_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeech/test-clean-labeled'
 it_data_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/CommonVoice/it/clips_wav_16khz_labeled'
+# ru_data_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/CommonVoice/ru/clips_wav_16khz_labeled'
 
 # models
+
 eng_asr_model = nemo_asr.models.ASRModel.from_pretrained("stt_en_conformer_transducer_small")
 it_asr_model = nemo_asr.models.ASRModel.from_pretrained("stt_it_quartznet15x5")
 ru_asr_model = nemo_asr.models.ASRModel.from_pretrained("stt_ru_quartznet15x5")
-
+chckp = 'stt_it_quartznet15x5'
 
 
 file_paths = glob.glob(it_data_dir + "/**/*.wav", recursive=True)
 print('len of the corpus: ', len(file_paths))
 
-labels_csyl, labels_sp_rate, preds_csyl, preds_sp_rate = eval(it_asr_model, file_pathes, 'it')
+corpuse_size, labels_csyl, labels_sp_rate, preds_csyl, preds_sp_rate = eval(it_asr_model, file_paths, 'it')
 
 # save lists as pickle
 with open('it_labels_csyl.pkl', 'wb') as f:
@@ -159,9 +168,9 @@ print()
 print(f'mae sp_rate: {mae_sp_rate.item():.4f}')
 print(f'pcc sp_rate: {pcc_sp_rate.item():.4f}')
 
-language = 'Spanish'
+language = 'Italean'
 with open("nemo_eval_res_common_voices.csv", "a", newline="") as f:
     writer = csv.writer(f)
-    writer.writerow(["Model", "Corpus",'language', '#audios', "MAE_csyl", "MSE_csyl","PCC_csyl", "MAE_sp_rate", "PCC_sp_rate"])
-    writer.writerow([model_name, "Common Voice", language, corpuse_size, f'{mae_csyl.item():.4f}',f'{mse_csyl.item():.4f}', f'{pcc_csyl.item():.4f}',
+    writer.writerow(["Ckckp", "Corpus",'language', '#audios', "MAE_csyl", "MSE_csyl","PCC_csyl", "MAE_sp_rate", "PCC_sp_rate"])
+    writer.writerow([chckp, "Common Voice", language, corpuse_size, f'{mae_csyl.item():.4f}',f'{mse_csyl.item():.4f}', f'{pcc_csyl.item():.4f}',
                                                                         f'{mae_sp_rate.item():.4f}', f'{pcc_sp_rate.item():.4f}'])
