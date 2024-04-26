@@ -3,3 +3,4 @@ stt_ru_quartznet15x5,Common Voice,Russian,163387,0.2985,0.7278,0.9973,0.0627,0.9
 stt_it_quartznet15x5,Common Voice,Italean,236600,0.3264,94.1831,0.6949,0.0700,0.3168
 stt_en_conformer_transducer_small,Librispeech test-clean,English,2620,0.2092,0.3794,0.9997,0.0322,0.9930
 stt_es_quartznet15x5,Common Voice,Spanish,293025,0.1307,0.2358,0.9987,0.0243,0.9975
+stt_en_conformer_transducer_small,Common Voice,English,200000,0.1262,0.3635,0.9963,0.0308,0.9880
