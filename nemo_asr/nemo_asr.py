@@ -11,7 +11,17 @@ import pickle
 import csv
 
 
-
+def AM_syl_computing(sentence):
+    """The function takes armenian sentence as input and returns number of syllables in the sentence"""
+    arm_vowels = ['ա', 'ե', 'է', 'ը',  'ի', 'ո', 'օ', 'ու']
+    unicode_arm_vowels = [1377, 1381, 1383, 1384, 1387, 1400, 1413]
+    
+    sentence = sentence.lower()
+    syl_count = 0
+    for s in sentence:
+        if ord(s) in unicode_arm_vowels:
+            syl_count += 1
+    return syl_count
 
 def Eng_syl_computing(sentence):
     vowels = ['a', 'e', 'i', 'o', 'u', 'y']
@@ -92,8 +102,8 @@ def eval(asr_model, file_pathes, lngu):
         transcript = asr_model.transcribe(file)
         print(transcript[0])
 
-        if lngu == 'eng':
-            pred_csyl = Eng_syl_computing(transcript[0]) # [0][0] for eng
+        if lngu == 'en':
+            pred_csyl = Eng_syl_computing(transcript[0][0])
         elif lngu == 'arm':
             pred_csyl = AM_syl_computing(transcript[0])
         elif lngu == 'ru':
@@ -114,34 +124,36 @@ def eval(asr_model, file_pathes, lngu):
 
 # datasets
 # libri_data_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeech/test-clean-labeled'
-it_data_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/CommonVoice/it/clips_wav_16khz_labeled'
+# it_data_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/CommonVoice/it/clips_wav_16khz_labeled'
 # ru_data_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/CommonVoice/ru/clips_wav_16khz_labeled'
-
+# es_data_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/CommonVoice/es/clips_wav_16khz_labeled'
+it_noisy_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/CommonVoice/it/noisy_mixed_wavs_10db'
 # models
 
 eng_asr_model = nemo_asr.models.ASRModel.from_pretrained("stt_en_conformer_transducer_small")
 it_asr_model = nemo_asr.models.ASRModel.from_pretrained("stt_it_quartznet15x5")
 ru_asr_model = nemo_asr.models.ASRModel.from_pretrained("stt_ru_quartznet15x5")
+es_asr_model = nemo_asr.models.ASRModel.from_pretrained("stt_es_quartznet15x5")
 chckp = 'stt_it_quartznet15x5'
 
 
-file_paths = glob.glob(it_data_dir + "/**/*.wav", recursive=True)
+file_paths = sorted(glob.glob(it_noisy_dir + "/**/*.wav", recursive=True))
 print('len of the corpus: ', len(file_paths))
 
 corpuse_size, labels_csyl, labels_sp_rate, preds_csyl, preds_sp_rate = eval(it_asr_model, file_paths, 'it')
 
 # save lists as pickle
-with open('it_labels_csyl.pkl', 'wb') as f:
-    pickle.dump(labels_csyl, f)
+# with open('en_labels_csyl.pkl', 'wb') as f:
+#     pickle.dump(labels_csyl, f)
 
-with open('it_labels_sp_rate.pkl', 'wb') as f:
-    pickle.dump(labels_sp_rate, f)
+# with open('en_labels_sp_rate.pkl', 'wb') as f:
+#     pickle.dump(labels_sp_rate, f)
 
-with open('it_preds_csyl.pkl', 'wb') as f:
-    pickle.dump(preds_csyl, f)
+# with open('en_preds_csyl.pkl', 'wb') as f:
+#     pickle.dump(preds_csyl, f)
 
-with open('it_preds_sp_rate.pkl', 'wb') as f:
-    pickle.dump(preds_sp_rate, f)
+# with open('en_preds_sp_rate.pkl', 'wb') as f:
+#     pickle.dump(preds_sp_rate, f)
 
 
 MSE = nn.MSELoss()
@@ -169,8 +181,8 @@ print(f'mae sp_rate: {mae_sp_rate.item():.4f}')
 print(f'pcc sp_rate: {pcc_sp_rate.item():.4f}')
 
 language = 'Italean'
-with open("nemo_eval_res_common_voices.csv", "a", newline="") as f:
+with open("nemo_eval_on_noisy_corpora.csv", "a", newline="") as f:
     writer = csv.writer(f)
-    writer.writerow(["Ckckp", "Corpus",'language', '#audios', "MAE_csyl", "MSE_csyl","PCC_csyl", "MAE_sp_rate", "PCC_sp_rate"])
-    writer.writerow([chckp, "Common Voice", language, corpuse_size, f'{mae_csyl.item():.4f}',f'{mse_csyl.item():.4f}', f'{pcc_csyl.item():.4f}',
+    # writer.writerow(["Model", "Corpus",'snr(db)', 'language', '#audios', "MAE_csyl", "MSE_csyl","PCC_csyl", "MAE_sp_rate", "PCC_sp_rate"])
+    writer.writerow([chckp, "Common Voice", 10, language, corpuse_size, f'{mae_csyl.item():.4f}',f'{mse_csyl.item():.4f}', f'{pcc_csyl.item():.4f}',
                                                                         f'{mae_sp_rate.item():.4f}', f'{pcc_sp_rate.item():.4f}'])
