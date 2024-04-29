@@ -1,3 +1,4 @@
 Model,Corpus,snr(db),language,#audios,MAE_csyl,MSE_csyl,PCC_csyl,MAE_sp_rate,PCC_sp_rate
 stt_en_conformer_transducer_small,Common Voice,10,English,200000,0.4349,1.7530,0.9829,0.1105,0.9533
 stt_it_quartznet15x5,Common Voice,10,Italean,236600,0.5708,94.9070,0.6922,0.1174,0.3134
+stt_it_quartznet15x5,Common Voice,10,Spanish,293025,0.4701,1.3243,0.9926,0.0925,0.9856
