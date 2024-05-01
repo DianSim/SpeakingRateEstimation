@@ -16,7 +16,7 @@ class AudioDataset(Dataset):
         self.transform = transform
         self.mfcc_transform =  T.MFCC(
             sample_rate=config['sample_rate'],
-            n_mfcc=config_feature['mfcc_num_mel_bins'], # ??self.fft_length//2 + 1
+            n_mfcc=config_feature['mfcc_num_mel_bins'], 
             melkwargs={
                 "n_fft": config_feature['window_size_ms']*config['sample_rate']//1000, # length of the FFT window
                 "n_mels": config_feature['mfcc_num_mel_bins'],
