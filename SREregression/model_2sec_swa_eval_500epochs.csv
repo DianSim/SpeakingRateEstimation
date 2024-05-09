@@ -1,0 +1,2 @@
+model,corpus,language,#audios,mae_csyl,mse_csyl,pcc_csyl,mae_sp_rate,pcc_sp_rate
+rMatchBoxNet-3x2x112-swa-500epochs,LibriSpeech test,English,2620,3.2663,20.9417,0.9914,0.4798,0.8581
