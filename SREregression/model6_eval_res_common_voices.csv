@@ -1,2 +1,0 @@
-Model,Corpus,language,#audios,MAE_csyl,MSE_csyl,PCC_csyl,MAE_sp_rate,PCC_sp_rate
-rMatchBoxNet-3x2x112,Common Voice,English,200000,3.5414,24.4789,0.8746,0.8012,0.7179

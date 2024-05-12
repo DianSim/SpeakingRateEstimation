@@ -1,2 +1,0 @@
-Model,Corpus,language,#audios,MAE_csyl,MSE_csyl,PCC_csyl,MAE_sp_rate,PCC_sp_rate
-rMatchBoxNet-3x2x112,Common Voice,Armenian,14813,5.0302,33.4520,0.9350,0.9353,0.7916

@@ -1,5 +1,0 @@
-Model,Corpus,snr(db),language,#audios,MAE_csyl,MSE_csyl,PCC_csyl,MAE_sp_rate,PCC_sp_rate
-rMatchBoxNet-3x2x112,Common Voice,10,Armenian,14813,4.6250,30.1029,0.9224,0.8594,0.7430
-rMatchBoxNet-3x2x112,Common Voice,10,Spanish,293025,3.0969,16.2366,0.9038,0.6441,0.7955
-rMatchBoxNet-3x2x112,Common Voice,10,Russian,163387,2.9495,14.1881,0.9514,0.6167,0.8291
-rMatchBoxNet-3x2x112,Common Voice,10,Italian,236600,2.6913,105.4573,0.6487,0.5402,0.2645
