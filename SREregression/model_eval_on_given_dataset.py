@@ -10,16 +10,20 @@ import tqdm
 import librosa
 from config import config
 import pickle
+import glob
 
 
 model = model.MatchBoxNetreg(B=3, R=2, C=112)
-path = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/SREregression/models_4sec/rMatchBoxNet-3x2x112/checkpoints/best-epoch=194-val_loss=4.60-val_pcc=0.95.ckpt'
-state_dict = torch.load(path)
+
+path2_swa = '/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/SREregression/models_2sec/rMatchBoxNet-3x2x112-swa-1e-2_cos/checkpoints/best-epoch=105-val_loss=2.41-val_pcc=0.89.ckpt'
+# path2_swa = '/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/SREregression/models_2sec/rMatchBoxNet-3x2x112-swa-500epochs/checkpoints/best-epoch=173-val_loss=2.42-val_pcc=0.89.ckpt'
+state_dict = torch.load(path2_swa)
 model.load_state_dict(state_dict['state_dict'])
 
-model_name = path.split(os.sep)[-3]
+model_name = path2_swa.split(os.sep)[-1]
 
-data_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/CommonVoice/hy-AM/clips_wav_16khz_labeled'
+data_dir = '/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/data/CommonVoice/en/clips_wav_16khz_labeled'
+file_paths = sorted(glob.glob(data_dir+'/**/*.wav', recursive=True))[:200000]
 
 labels_csyl = []
 labels_sp_rate = []
@@ -28,45 +32,83 @@ preds_sp_rate = []
 
 header = True
 corpuse_size = 0
-for root, dirs, files in os.walk(data_dir):
-    for file in tqdm.tqdm(files):
-        # if corpuse_size == 100:
-        #     break
-        if file[-4:] == '.wav':
-            corpuse_size += 1
-            file_path = os.path.join(root, file)
 
-            print('file path: ', file_path)
+for file_path in tqdm.tqdm(file_paths):
+    if file_path[-4:] == '.wav':
+        corpuse_size += 1
+        file = file_path.split(os.sep)[-1]
 
-            start_time = time.time()
-            pred = inference(model, audio_path=file_path)
-            if pred is None:
-                continue
-            end_time = time.time()
+        print('file path: ', file_path)
 
-            inference_time = end_time - start_time
+        start_time = time.time()
+        pred = inference(model, audio_path=file_path)
+        if pred is None:
+            continue
+        end_time = time.time()
 
-            if pred['syl_count'].isnan() or pred['speaking_rate'].isnan():
-                continue
+        inference_time = end_time - start_time
 
-            preds_csyl.append(pred['syl_count'])
-            preds_sp_rate.append(pred['speaking_rate'])
+        if pred['syl_count'].isnan() or pred['speaking_rate'].isnan():
+            continue
 
-            csyl = int(file.split('.')[0].split('_')[-1])
+        preds_csyl.append(pred['syl_count'])
+        preds_sp_rate.append(pred['speaking_rate'])
 
-            labels_csyl.append(csyl)
+        csyl = int(file.split('.')[0].split('_')[-1])
 
-            audio, sr = librosa.load(file_path, sr=config['sample_rate'])
-            audio_len = audio.shape[0]/sr
+        labels_csyl.append(csyl)
 
-            labels_sp_rate.append(csyl/audio_len)
+        audio, sr = librosa.load(file_path, sr=config['sample_rate'])
+        audio_len = audio.shape[0]/sr
+
+        labels_sp_rate.append(csyl/audio_len)
+        
+        print('label csyl: ', csyl)
+        print('prediction csyl: ', pred['syl_count'])
+        print('label sp_rate: ', csyl/audio_len)
+        print('prediction sp_rate: ', pred['speaking_rate'])
+        print('inference time: ', inference_time) 
+        print()
+
+# for root, dirs, files in os.walk(data_dir):
+#     for file in tqdm.tqdm(files):
+#         # if corpuse_size == 100:
+#         #     break
+#         if file[-4:] == '.wav':
+#             corpuse_size += 1
+#             file_path = os.path.join(root, file)
+
+#             print('file path: ', file_path)
+
+#             start_time = time.time()
+#             pred = inference(model, audio_path=file_path)
+#             if pred is None:
+#                 continue
+#             end_time = time.time()
+
+#             inference_time = end_time - start_time
+
+#             if pred['syl_count'].isnan() or pred['speaking_rate'].isnan():
+#                 continue
+
+#             preds_csyl.append(pred['syl_count'])
+#             preds_sp_rate.append(pred['speaking_rate'])
+
+#             csyl = int(file.split('.')[0].split('_')[-1])
+
+#             labels_csyl.append(csyl)
+
+#             audio, sr = librosa.load(file_path, sr=config['sample_rate'])
+#             audio_len = audio.shape[0]/sr
+
+#             labels_sp_rate.append(csyl/audio_len)
             
-            print('label csyl: ', csyl)
-            print('prediction csyl: ', pred['syl_count'])
-            print('label sp_rate: ', csyl/audio_len)
-            print('prediction sp_rate: ', pred['speaking_rate'])
-            print('inference time: ', inference_time) 
-            print()
+#             print('label csyl: ', csyl)
+#             print('prediction csyl: ', pred['syl_count'])
+#             print('label sp_rate: ', csyl/audio_len)
+#             print('prediction sp_rate: ', pred['speaking_rate'])
+#             print('inference time: ', inference_time) 
+#             print()
             
 # # save lists as pickle
 # with open('labels_csyl.pkl', 'wb') as f:
@@ -111,10 +153,10 @@ print(f'pcc sp_rate: {pcc_sp_rate.item():.4f}')
 
 # save computed loss and metric in given file
 
-language = 'Armenian'
-with open("model_eval_res_common_voices2.csv", "a", newline="") as f:
+language = 'English'
+with open("./evaluation_results/model_2sec_swa_eval_500epochs.csv", "a", newline="") as f:
     writer = csv.writer(f)
-    writer.writerow(["Model", "Corpus",'language', '#audios', "MAE_csyl", "MSE_csyl","PCC_csyl", "MAE_sp_rate", "PCC_sp_rate"])
+    # writer.writerow(["checkp", "Corpus",'language', '#audios', "MAE_csyl", "MSE_csyl","PCC_csyl", "MAE_sp_rate", "PCC_sp_rate"])
     writer.writerow([model_name, "Common Voice", language, corpuse_size, f'{mae_csyl.item():.4f}',f'{mse_csyl.item():.4f}', f'{pcc_csyl.item():.4f}',
                                                                         f'{mae_sp_rate.item():.4f}', f'{pcc_sp_rate.item():.4f}'])
 

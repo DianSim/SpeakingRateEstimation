@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import os
 from pytorch_lightning import Trainer
 from pytorch_lightning.loggers import TensorBoardLogger
-from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.callbacks import ModelCheckpoint, StochasticWeightAveraging
 import os
 import torch
 
@@ -35,7 +35,7 @@ def build_trainer(config):
                       devices=1,
                       accelerator="gpu",
                       logger=tensorboard_logger,
-                      callbacks=[checkpoint_callback]
+                      callbacks=[checkpoint_callback, StochasticWeightAveraging(swa_lrs=1e-5, swa_epoch_start=0.8, annealing_epochs=10, annealing_strategy='linear')]
                       )
     return trainer
 
