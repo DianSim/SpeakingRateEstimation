@@ -5,6 +5,7 @@ from torch import nn
 import pytorch_lightning as pl
 from torchmetrics.regression import PearsonCorrCoef
 import torch.nn.functional as F
+from torchmetrics.regression import MeanAbsoluteError
 
 
 class LSTMRegression(pl.LightningModule):
@@ -298,7 +299,9 @@ class MatchBoxNetreg(pl.LightningModule):
         super().__init__()
         self.matchboxnet = MatchboxNet(B, R, C, kernel_sizes)
         self.loss = nn.MSELoss()
+        # self.loss = torch.nn.PoissonNLLLoss()
         self.pearson = PearsonCorrCoef()
+        self.mae = MeanAbsoluteError()
 
     def forward(self, x):
         out = self.matchboxnet(x)
@@ -308,8 +311,9 @@ class MatchBoxNetreg(pl.LightningModule):
         x, y = batch
         y_hat = self(x)
         loss = self.loss(y_hat, y)
-        self.log('train_los/s', loss)
+        self.log('train_loss', loss)
         self.log('train_pcc', self.pearson(y_hat, y))
+        self.log('train_mae', self.mae(y_hat, y))
         self.logger.experiment.add_scalars('loss', {'train': loss}, self.global_step)
         return loss
 
@@ -319,6 +323,7 @@ class MatchBoxNetreg(pl.LightningModule):
         loss = self.loss(y_hat, y)
         self.log('val_loss', loss)
         self.log('val_pcc', self.pearson(y_hat, y))
+        self.log('val_mae', self.mae(y_hat, y))
         self.logger.experiment.add_scalars('loss', {'val': loss}, self.global_step)
         return loss
 
@@ -328,7 +333,7 @@ class MatchBoxNetreg(pl.LightningModule):
         y_hat = self(x)
         loss = self.loss(y_hat, y)
 
-        return {'loss':loss, 'y_hat':y_hat, 'y':y, 'pcc':self.pearson(y_hat, y)}
+        return {'loss':loss, 'y_hat':y_hat, 'y':y, 'pcc':self.pearson(y_hat, y), 'mae':self.mae(y_hat, y)}
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr=0.001)

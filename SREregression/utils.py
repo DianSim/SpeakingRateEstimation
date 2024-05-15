@@ -18,7 +18,7 @@ def build_trainer(config):
     # checkpoint callback
     checkpoint_callback = ModelCheckpoint(
         dirpath=ckpt_dir,
-        filename='best-{epoch:02d}-{val_loss:.2f}-{val_pcc:.2f}',
+        filename='best-{epoch:02d}-{val_loss:.2f}-{val_pcc:.2f}-{val_mae:.2f}',
         save_top_k=5,
         verbose=True,
         monitor='val_loss',
@@ -35,11 +35,11 @@ def build_trainer(config):
                       devices=1,
                       accelerator="gpu",
                       logger=tensorboard_logger,
-                      callbacks=[checkpoint_callback, StochasticWeightAveraging(swa_lrs=1e-5, swa_epoch_start=0.8, annealing_epochs=10, annealing_strategy='linear')]
+                      callbacks=[checkpoint_callback, StochasticWeightAveraging(swa_lrs=5e-2, swa_epoch_start=0.75, annealing_epochs=10, annealing_strategy='linear')]
                       )
     return trainer
 
-
+# swa_epoch_start (75%)
 def avg_loss_metric_from_batch_list(predictions):
     """
     Calculates the average loss and pcc from a list of batch predictions
