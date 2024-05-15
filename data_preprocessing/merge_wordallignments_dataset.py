@@ -17,6 +17,6 @@ def merge(dir):
                     shutil.copy(soure, dst_dir)
 
 
-allignment_dir = '/data/saten/diana/data/LibriSpeech-Alignments'
+allignment_dir = '/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/data/LibriSpeech-Alignments'
 if __name__ == '__main__':
     merge(allignment_dir)

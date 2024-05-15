@@ -17,5 +17,5 @@ def Speed(dir, save_dir_name, speed_factor):
                 print('speed factor: ', speed_factor)
 
 
-dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_train_4sec/train-clean-100'
-Speed(dir, 'LibriSpeechChunked_train_fast_2x_32khz', speed_factor=2)
+dir = '/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/data/tmp/LibriSpeechChuncked_train_4sec/train-clean-100'
+Speed(dir, 'train-clean_fast_2x_32khz', speed_factor=2)

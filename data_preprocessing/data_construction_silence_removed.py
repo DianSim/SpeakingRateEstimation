@@ -129,8 +129,8 @@ def chuncking_labeling(dir, chunck_length):
 
                             # save_dir = root.replace('LibriSpeech', 'LibriSpeechChuncked_sil_removed')
 
-                            save_dir_4 = root.replace('LibriSpeech', 'LibriSpeechChuncked_train_4sec')
-                            save_dir_3 = root.replace('LibriSpeech', 'LibriSpeechChuncked_train_3sec')
+                            save_dir_4 = root.replace('LibriSpeech', os.path.join('tmp', 'LibriSpeechChuncked_train_4sec'))
+                            save_dir_3 = root.replace('LibriSpeech', os.path.join('tmp', 'LibriSpeechChuncked_train_3sec'))
 
                             if not os.path.exists(save_dir_4):
                                 os.makedirs(save_dir_4)
@@ -165,10 +165,12 @@ def chuncking_labeling(dir, chunck_length):
                             print()
                             # if exact_chunck_len > 2.5:
                             #     print(os.path.join(save_dir, filename))
+                            #     print(f'exact chunck length: {exact_chunck_len}')
+
 
                             i_begin = i_end + 1
 
 
 if __name__ == '__main__':
-    dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeech/train-clean-100'
+    dir = '/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/data/LibriSpeech/train-clean-100'
     chuncking_labeling(dir, 4)

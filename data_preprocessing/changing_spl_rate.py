@@ -26,9 +26,8 @@ def sample_rate_list(dir):
     return sample_rates
 
 
-# source = '/data/saten/diana/SpeakingRateEstimation/data/ESC-50-master/audio'
-# change_sample_rate(source, 16000, 'ESC-50_16khz')
-
+source = '/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/data/tmp/train-clean_fast_2x_32khz/train-clean-100'
+change_sample_rate(source, 16000, 'train-clean_fast_2x_16khz')
 
 # --------------------------------Testing--------------------------------
-print(sample_rate_list('/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed'))
+# print(sample_rate_list('/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed'))

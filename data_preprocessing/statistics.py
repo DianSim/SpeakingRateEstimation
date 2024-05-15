@@ -45,7 +45,7 @@ def stat(dir, save_dir, split):
                 signal, sr = sf.read(os.path.join(root, file))
                 len_in_samples.append(len(signal))
                 lens.append(len(signal)/sr)
-                spr.append(int(file.split('.')[0].split('_')[1])) # 0 for chuncked
+                spr.append(int(file.split('.')[0].split('_')[0])) # 1 for chuncked
     save(lens, 'chunck length', f'{split} set chunk length distribution', os.path.join(save_dir, f'{split}_length'))
     save(spr, 'speaking rate (#vowal)', f'{split} set speaking rate distribution', os.path.join(save_dir, f'{split}_sp_rate'))
     class_distr(spr, split, save_dir)
@@ -60,18 +60,18 @@ def stat(dir, save_dir, split):
 
 
 if __name__ == '__main__':
-    # save_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/Statitics/LibriSpeechChuncked_sil_removed'
-    # val_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/dev-clean'
-    # test_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/test-clean'
-    # train_dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/train-clean-100'
+    save_dir = './stat'
+    # val_dir = '/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/dev-clean-fast-augmented'
+    # test_dir = '/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/test-clean'
+    train_dir = '/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/data/LibriSpeechChuncked_sil_removed/train-clean-100-fast-augmented'
 
 
-    # stat(val_dir, save_dir, 'val')
+    # stat(val_dir, save_dir, 'val-fast-augm')
     # stat(test_dir, save_dir, 'test')
-    # stat(train_dir, save_dir, 'train')
+    stat(train_dir, save_dir, 'train-fast-augm-2')
 
-    dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeech/test-clean-labeled'
-    stat(dir, '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/Statitics/LibriSpeech', 'test-clean-labeled')
+    # dir = '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/LibriSpeech/test-clean-labeled'
+    # stat(dir, '/home/dianasimonyan/Desktop/Thesis/SpeakingRateEstimation/data/Statitics/LibriSpeech', 'test-clean-labeled')
     # file = '/data/saten/diana/SpeakingRateEstimation/data/LibriSpeechChunked_train_fast_2x/train-clean-100/19/198/16_3.wav'
     # signal, sr = sf.read(file)
     # print(sr)
