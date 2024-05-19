@@ -283,7 +283,7 @@ class MatchboxNet(nn.Module):
         x = self.epilogue_conv3(x) # (128, 33) > (1, 33)
         x = self.epilogue_adaptivepool(x) # (1, 33) > (1, 1)
         x = x.squeeze(2) # (N, 1, 1) > (N, 1)
-        x = torch.clamp(x, min=0, max=38)
+        x = torch.clamp(x, min=0, max=73)
 
         return x
 
@@ -298,8 +298,9 @@ class MatchBoxNetreg(pl.LightningModule):
     def __init__(self, B, R, C, kernel_sizes=None):
         super().__init__()
         self.matchboxnet = MatchboxNet(B, R, C, kernel_sizes)
-        self.loss = nn.MSELoss()
-        # self.loss = torch.nn.PoissonNLLLoss()
+        # self.loss = nn.MSELoss()
+        #self.loss = nn.MSELoss() + 0.1*torch.nn.PoissonNLLLoss()
+        self.loss = torch.nn.PoissonNLLLoss()
         self.pearson = PearsonCorrCoef()
         self.mae = MeanAbsoluteError()
 

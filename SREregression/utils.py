@@ -35,7 +35,7 @@ def build_trainer(config):
                       devices=1,
                       accelerator="gpu",
                       logger=tensorboard_logger,
-                      callbacks=[checkpoint_callback, StochasticWeightAveraging(swa_lrs=5e-2, swa_epoch_start=0.75, annealing_epochs=10, annealing_strategy='linear')]
+                      callbacks=[checkpoint_callback]#StochasticWeightAveraging(swa_lrs=1e-2, swa_epoch_start=50, annealing_epochs=10, annealing_strategy='linear')]
                       )
     return trainer
 

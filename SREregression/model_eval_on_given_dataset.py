@@ -15,14 +15,14 @@ import glob
 
 model = model.MatchBoxNetreg(B=3, R=2, C=112)
 
-path2_swa = '/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/SREregression/models_2sec/rMatchBoxNet-3x2x112-pretrained_swa-lin-5e-2_swast0_75_annepch_10/checkpoints/best-epoch=47-val_loss=2.39-val_pcc=0.89-val_mae=1.14.ckpt'
-# path2_swa = '/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/SREregression/models_2sec/rMatchBoxNet-3x2x112-swa-500epochs/checkpoints/best-epoch=173-val_loss=2.42-val_pcc=0.89.ckpt'
+# path4_pois = '/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/SREregression/models_4sec/rMatchBoxNet-3x2x112-poisson/checkpoints/best-epoch=192-val_loss=-43.49-val_pcc=0.90-val_mae=17.40.ckpt'
+path2_swa = '/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/SREregression/models_2sec/rMatchBoxNet-3x2x112-swa-lin_1e-2_stepch-50_annepch-10/checkpoints/best-epoch=80-val_loss=2.33-val_pcc=0.89-val_mae=1.14.ckpt'
 state_dict = torch.load(path2_swa)
 model.load_state_dict(state_dict['state_dict'])
 
 model_name = path2_swa.split(os.sep)[-1]
 
-data_dir = '/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/data/LibriSpeech/test-clean-labeled'
+data_dir = '/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/data/CommonVoice/ru/clips_wav_16khz_labeled'
 file_paths = sorted(glob.glob(data_dir+'/**/*.wav', recursive=True))#[:200000]
 
 labels_csyl = []
@@ -153,13 +153,13 @@ print(f'pcc sp_rate: {pcc_sp_rate.item():.4f}')
 
 # save computed loss and metric in given file
 
-# language = 'Spanish'
-# # rMatchBoxNet-3x2x112-swa_lin_5e-2_swast150_annepch_5
-# with open("./evaluation_results/model_2sec_swa_lin-5e-2_swast150_annepch_5_eval.csv", "a", newline="") as f:
-#     writer = csv.writer(f)
-#     # writer.writerow(["checkp", "Corpus",'language', '#audios', "MAE_csyl", "MSE_csyl","PCC_csyl", "MAE_sp_rate", "PCC_sp_rate"])
-#     writer.writerow([model_name, "Common Voice", language, corpuse_size, f'{mae_csyl.item():.4f}',f'{mse_csyl.item():.4f}', f'{pcc_csyl.item():.4f}',
-#                                                                         f'{mae_sp_rate.item():.4f}', f'{pcc_sp_rate.item():.4f}'])
+language = 'Russian'
+# rMatchBoxNet-3x2x112-swa_lin_5e-2_swast150_annepch_5
+with open("./evaluation_results/model_2sec_swa-lin_1e-2_stepch-50_annepch-10_eval.csv", "a", newline="") as f:
+    writer = csv.writer(f)
+    # writer.writerow(["checkp", "Corpus",'language', '#audios', "MAE_csyl", "MSE_csyl","PCC_csyl", "MAE_sp_rate", "PCC_sp_rate"])
+    writer.writerow([model_name, "Common Voice", language, corpuse_size, f'{mae_csyl.item():.4f}',f'{mse_csyl.item():.4f}', f'{pcc_csyl.item():.4f}',
+                                                                         f'{mae_sp_rate.item():.4f}', f'{pcc_sp_rate.item():.4f}'])
 
 
 

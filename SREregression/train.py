@@ -30,9 +30,9 @@ train_dataloader, val_dataloader, test_dataloader = data_setup.create_dataloader
 model = model.MatchBoxNetreg(B=3, R=2, C=112)
 
 # --------------------------------------------------------------SWA experiment----------------------------------------------------------------------
-path = '/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/SREregression/models_2sec/rMatchBoxNet-3x2x112/checkpoints/best-epoch=198-val_loss=1.50-val_pcc=0.93.ckpt'
-state_dict = torch.load(path)
-model.load_state_dict(state_dict['state_dict'])
+# path = '/home/diana/Desktop/MyWorkspace/Project/SpeakingRateEstimation/SREregression/models_2sec/rMatchBoxNet-3x2x112/checkpoints/best-epoch=198-val_loss=1.50-val_pcc=0.93.ckpt'
+# state_dict = torch.load(path)
+# model.load_state_dict(state_dict['state_dict'])
 
 #load model and 
 trainer = build_trainer(config)

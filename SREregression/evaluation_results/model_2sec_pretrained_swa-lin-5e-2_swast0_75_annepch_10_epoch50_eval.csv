@@ -1,0 +1,7 @@
+checkp,Corpus,language,#audios,MAE_csyl,MSE_csyl,PCC_csyl,MAE_sp_rate,PCC_sp_rate
+best-epoch=30-val_loss=2.40-val_pcc=0.89-val_mae=1.15.ckpt,LibriSpeech,English,2620,2.7604,15.5501,0.9917,0.4173,0.8578
+best-epoch=30-val_loss=2.40-val_pcc=0.89-val_mae=1.15.ckpt,Common Voice,Armenian,14813,3.6698,19.3880,0.9385,0.6829,0.8027
+best-epoch=30-val_loss=2.40-val_pcc=0.89-val_mae=1.15.ckpt,Common Voice,Italian,236600,2.5057,104.1114,0.6578,0.4994,0.2766
+best-epoch=30-val_loss=2.40-val_pcc=0.89-val_mae=1.15.ckpt,Common Voice,Spanish,293025,2.8415,14.3300,0.9165,0.5880,0.8305
+best-epoch=30-val_loss=2.40-val_pcc=0.89-val_mae=1.15.ckpt,Common Voice,Russian,163387,2.5779,11.1739,0.9591,0.5289,0.8654
+best-epoch=30-val_loss=2.40-val_pcc=0.89-val_mae=1.15.ckpt,Common Voice,English,200000,2.0427,8.0064,0.9325,0.4078,0.8676

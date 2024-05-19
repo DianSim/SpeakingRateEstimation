@@ -1,0 +1,2 @@
+checkp,Corpus,language,#audios,MAE_csyl,MSE_csyl,PCC_csyl,MAE_sp_rate,PCC_sp_rate
+best-epoch=192-val_loss=-43.49-val_pcc=0.90-val_mae=17.40.ckpt,LibriSpeech test,English,2620,29.4403,1328.5902,0.9756,3.8905,0.2596
