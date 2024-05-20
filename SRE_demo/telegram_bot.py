@@ -8,28 +8,8 @@ import torch
 import time
 import model
 
-# # Check if MPS is available
-# if torch.backends.mps.is_available():
-#     device = torch.device("mps")
-#     print("MPS device is available.")
-# else:
-#     device = torch.device("cpu")
-#     print("MPS device is not available. Using CPU.")
 
 device='cpu'
-
-# try:
-#     # Load the model on the CPU
-#     model = torch.load(model_path, map_location=torch.device('cpu'))
-#     print("Model loaded successfully on CPU.")
-    
-#     # Move the model to the MPS device if available
-#     model.to(device)
-#     print(f"Model moved to {device}.")
-    
-# except RuntimeError as e:
-#     print(f"Error loading model: {e}")
-
 
 HELP = '''
 Welcome to the Speaking Rate Estimator Bot! 🤖
@@ -56,7 +36,7 @@ I'm here to help you analyze the speaking rate of any audio or recording you sen
 
 What I Can Do for You:
 
-1. Estimate Speaking Rate: Get the rate of speech in syllables per second.
+*1. Estimate Speaking Rate:* Get the rate of speech in syllables per second.
 2. Count Syllables: Find out the total number of syllables in the audio.
 3. Provide Inference Time: See how quickly the analysis is performed.
 
@@ -72,13 +52,39 @@ logging.basicConfig(
     level=logging.INFO
 )
 
+
+def Eng_syl_computing(sentence):
+    vowels = ['a', 'e', 'i', 'o', 'u', 'y']
+    # unicode_eng_vowels = [1377, 1381, 1383, 1384, 1387, 1400, 1413]
+    sentence = sentence.lower()
+    syl_count = 0
+    for s in sentence:
+        if s in vowels:
+            syl_count += 1
+    return syl_count
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Send a message when the command /start is issued."""
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=START)
+    start_message = (
+        "🎤 <strong>Hello! Welcome to the Speaking Rate Estimator Bot!</strong> 🎉\n\n"
+        "I'm here to help you analyze the speaking rate of any audio or recording you send me. Whether you're curious about your own speech or analyzing someone else's, I'm here to provide the insights you need.\n\n"
+        "🔍 <b>What I Can Do for You:</b>\n"
+        "1. <b>Estimate Speaking Rate:</b> Get the rate of speech in syllables per second.\n"
+        "2. <b>Count Syllables:</b> Find out the total number of syllables in the audio.\n"
+        "3. <b>Provide Inference Time:</b> See how quickly the analysis is performed.\n\n"
+        "📋 <b>How to Get Started:</b>\n"
+        "Simply send me any audio or voice recording, and I'll analyze it for you. It's that easy\n\n"
+        "Let's get started! Send me an audio message now, and I'll do the rest. 📲🎙️"
+    )
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=start_message, parse_mode='HTML')
+    # await context.bot.send_message(chat_id=update.effective_chat.id, text=START)
+
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /help is issued."""
     await update.message.reply_text(HELP)
+
 
 async def handle_audio(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     audio_file = update.message.audio or update.message.voice
@@ -110,38 +116,35 @@ async def handle_audio(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     pred = inference(my_model, audio_path=wav_path)
     end_time = time.time()
 
+    print(type(pred['speaking_rate']), pred['speaking_rate'])
+    print(type(pred['syl_count']), pred['syl_count'])
+    print(type(end_time-start_time), end_time-start_time)
+    await update.message.reply_text(f'''<b>Speaking rate:</b> {round(pred['speaking_rate'].item(), 4)}\n'''
+                                    f'''<b>Syllable count:</b> {round(pred['syl_count'].item(), 4)}\n'''
+                                    f'''<b>Inference time:</b> {round(end_time-start_time, 4)} seconds''', 
+                                    parse_mode='HTML')
+    
+async def handle_text(update: Update, context):
 
-    # Your speaking rate estimation logic here
-    # speaking_rate = estimate_speaking_rate(local_path)
-    await update.message.reply_text(#f"Speaking rate: {pred['speaking_rate']}",
-                                    f"Syllable count: {pred['syl_count']}")
-                                    # f"Inference time: {end_time-start_time}sec")
+    # Get the incoming message text
+    text = update.message.text
+
+    # Count the number of syllables in the text
+    syllables = Eng_syl_computing(text)
+
+    # Respond with the computed syllable count
+    await update.message.reply_text(f"*Actual Syllable count:* {syllables}", parse_mode='MarkdownV2')
 
 
 if __name__ == '__main__':
     TOKEN = '7176232923:AAG_73mXU5hcbqlIgADJOzkeABPbh0Ur57M'
     application = ApplicationBuilder().token(TOKEN).build()
     
-    start_handler = CommandHandler('start', start)
-    application.add_handler(start_handler)
+    application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('help', help_command))
     application.add_handler(MessageHandler(filters.VOICE | filters.AUDIO, handle_audio))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
     
     application.run_polling()
     application.idle()
     application.run_polling()
-
-    # my_model = model.MatchBoxNetreg(B=3, R=2, C=112)
-    # path = '/Users/dianasimonyan/Desktop/Thesis/torch_implementation/SREregression/models_2sec/rMatchBoxNet-3x2x112/checkpoints/best-epoch=198-val_loss=1.50-val_pcc=0.93.ckpt'
-    # state_dict = torch.load(path, map_location=torch.device('cpu'))
-    # my_model.load_state_dict(state_dict['state_dict'])
-
-    # my_model.to(device)
-
-    # start_time = time.time()
-    # pred = inference(my_model, audio_path='/Users/dianasimonyan/Desktop/Thesis/torch_implementation/SRE_demo/audios_wav/AwACAgIAAxkBAAM9Zko8AAH7PCZhSeiq_ZWMnuhqPlEaAAJuVQACWRNQSkK2XG3R338TNQQ.wav')
-    # end_time = time.time()
-
-    # print(f"Speaking rate: {pred['speaking_rate']}",
-    #     f"Syllable count: {pred['syl_count']}",
-    #     f"Inference time: {end_time-start_time}sec")
